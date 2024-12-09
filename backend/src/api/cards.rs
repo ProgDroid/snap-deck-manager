@@ -12,7 +12,7 @@ struct Filters {
     selectable_only: Option<String>,
 }
 
-#[get("/api/cards")]
+#[get("/cards")]
 pub async fn get_cards(
     cards_data: Data<Vec<Card>>,
     filters: Query<Filters>,

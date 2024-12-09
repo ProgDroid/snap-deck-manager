@@ -9,7 +9,7 @@ use common::package::Package;
 
 use crate::repository::surrealdb::SurrealDbRepository;
 
-#[get("/api/package/{package_id}")]
+#[get("/package/{package_id}")]
 pub async fn get(
     package_identifier: Path<String>,
     db: Data<SurrealDbRepository>,
@@ -30,7 +30,7 @@ struct PostResponse {
     id: String,
 }
 
-#[post("/api/package")]
+#[post("/package")]
 pub async fn create(
     db: Data<SurrealDbRepository>,
     body: Json<PostData>,
@@ -46,7 +46,7 @@ pub async fn create(
     Ok(Json(post_response))
 }
 
-#[patch("/api/package/{package_id}")]
+#[patch("/package/{package_id}")]
 pub async fn update(
     package_id: Path<String>,
     db: Data<SurrealDbRepository>,
@@ -66,7 +66,7 @@ pub async fn update(
     Ok(Json(post_response))
 }
 
-#[get("/api/packages")]
+#[get("/packages")]
 pub async fn list(db: Data<SurrealDbRepository>) -> Result<Json<Vec<Package>>> {
     let packages = db.get_all_packages().await;
 

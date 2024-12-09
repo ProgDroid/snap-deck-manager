@@ -1,6 +1,7 @@
 use anyhow::Result;
 use config_file::FromConfigFile;
 use serde::Deserialize;
+use std::env;
 
 #[derive(Deserialize)]
 pub struct Api {
@@ -14,6 +15,14 @@ impl Api {
     }
 
     pub fn new() -> Result<Self> {
-        Ok(Self::from_config_file("backend/api.toml")?)
+        let path = match env::var("CONFIG_API") {
+            Ok(val) => val,
+            Err(e) => {
+                // TODO log e
+                "api.toml".to_owned()
+            }
+        };
+
+        Ok(Self::from_config_file(path)?)
     }
 }

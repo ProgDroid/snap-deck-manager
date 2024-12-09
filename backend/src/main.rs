@@ -63,9 +63,9 @@ async fn main() -> Result<()> {
             )
             .service(
                 spa()
-                    .index_file("./dist/index.html")
+                    .index_file("dist/index.html")
                     .static_resources_mount("/")
-                    .static_resources_location("./dist")
+                    .static_resources_location("dist")
                     .finish(),
             )
     })

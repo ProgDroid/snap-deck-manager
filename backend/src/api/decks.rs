@@ -9,7 +9,7 @@ use common::deck::Deck;
 
 use crate::repository::surrealdb::SurrealDbRepository;
 
-#[get("/api/deck/{deck_id}")]
+#[get("/deck/{deck_id}")]
 pub async fn get(
     deck_identifier: Path<String>,
     db: Data<SurrealDbRepository>,
@@ -30,7 +30,7 @@ struct PostResponse {
     id: String,
 }
 
-#[post("/api/deck")]
+#[post("/deck")]
 pub async fn create(
     db: Data<SurrealDbRepository>,
     body: Json<PostData>,
@@ -46,7 +46,7 @@ pub async fn create(
     Ok(Json(post_response))
 }
 
-#[patch("/api/deck/{deck_id}")]
+#[patch("/deck/{deck_id}")]
 pub async fn update(
     deck_id: Path<String>,
     db: Data<SurrealDbRepository>,
@@ -66,7 +66,7 @@ pub async fn update(
     Ok(Json(post_response))
 }
 
-#[get("/api/decks")]
+#[get("/decks")]
 pub async fn list(db: Data<SurrealDbRepository>) -> Result<Json<Vec<Deck>>> {
     let decks = db.get_all_decks().await;
 

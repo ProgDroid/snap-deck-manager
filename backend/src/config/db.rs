@@ -1,6 +1,7 @@
 use anyhow::Result;
 use config_file::FromConfigFile;
 use serde::Deserialize;
+use std::env;
 
 // TODO use secrets here
 // TODO don't make these pub, work out better way
@@ -20,6 +21,14 @@ impl Db {
     }
 
     pub fn new() -> Result<Self> {
-        Ok(Self::from_config_file("backend/database.toml")?)
+        let path = match env::var("CONFIG_DB") {
+            Ok(val) => val,
+            Err(e) => {
+                // TODO log e
+                "database.toml".to_owned()
+            }
+        };
+
+        Ok(Self::from_config_file(path)?)
     }
 }
