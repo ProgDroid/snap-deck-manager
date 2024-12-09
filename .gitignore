@@ -1,0 +1,9 @@
+/target
+database.toml
+api.toml
+Trunk.toml
+# /*/dist
+*.pdb
+**/*.rs.bk
+Cargo.lock
+dist
