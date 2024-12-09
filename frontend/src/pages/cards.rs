@@ -1,27 +1,22 @@
 use crate::{
-    api::cards::get_selectable as get_cards,
+    api::cards::get as get_cards,
     components::{
+        card_list::CardList,
         cards::{grid::CardGrid, grid_element::Display},
         filters::{
             buttons::FilterButtons,
             cost::Cost,
             sort::{Order as SortOrder, Sort},
             textbox::{FilterTextbox, Type as TextboxType},
+            view::View,
         },
     },
 };
 use common::card::Card;
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq, Clone)]
-pub struct Props {
-    pub excluded_cards: Vec<Card>,
-    pub on_click: Callback<Vec<Card>>,
-}
-
-#[function_component(CardPicker)]
-pub fn card_picker(props: &Props) -> Html {
-    // TODO should cards be passed in as props?
+#[function_component(CardsView)]
+pub fn cards_view() -> Html {
     let cards = use_state(|| None);
     {
         let cards = cards.clone();
@@ -81,10 +76,19 @@ pub fn card_picker(props: &Props) -> Html {
         })
     };
 
+    let selected_view = use_state(View::default);
+
+    let view_filter_select = {
+        let selected_view = selected_view.clone();
+
+        Callback::from(move |view: View| {
+            selected_view.set(view);
+        })
+    };
+
     if let Some(cards) = &*cards {
         let mut filtered_cards: Vec<Card> = cards
             .iter()
-            .filter(|card| !props.excluded_cards.contains(card))
             .filter(|card| (*selected_cost).compare(card.cost))
             .filter(|card| {
                 card.name
@@ -113,23 +117,51 @@ pub fn card_picker(props: &Props) -> Html {
 
         return html! {
             <>
-                <div id="card-picker" class="scroll-box-container">
-                    <FilterButtons<Sort> label={"Sort:"} select={sort_filter_select} selected={(*selected_sort).clone()} />
-                    <FilterButtons<SortOrder> label={"Sort Order:"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
-                    <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
-                    <FilterButtons<Cost> label={"Cost:"} select={cost_filter_select} selected={(*selected_cost).clone()} />
+                <FilterButtons<Sort> label={"Sort:"} select={sort_filter_select} selected={(*selected_sort).clone()} />
+                <FilterButtons<SortOrder> label={"Sort Order:"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
+                <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
+                <FilterButtons<Cost> label={"Cost:"} select={cost_filter_select} selected={(*selected_cost).clone()} />
+                <FilterButtons<View> label={"View:"} select={view_filter_select} selected={(*selected_view).clone()} />
 
-                    <div class="scroll-box">
-                    {
-                        html! {
-                            <CardGrid cards={filtered_cards.clone()} display={Display::Detailed} on_click={props.on_click.clone()}/>
+                {
+                    match *selected_view {
+                        View::Grid => {
+                            html! {
+                                <CardGrid cards={filtered_cards.clone()} display={Display::Detailed} on_click={Callback::from(move |_| {})}/>
+                            }
+                        },
+                        View::List => {
+                            html! {
+                                <table id="card-list">
+                                    <tr>
+                                        <th>{"Image"}</th>
+                                        <th>{"Name"}</th>
+                                        <th>{"Ability"}</th>
+                                        <th>{"Tags"}</th>
+                                    </tr>
+                                    {
+                                        filtered_cards.iter().map(|card| {
+                                            html! {
+                                                <CardList
+                                                    id={card.id.clone()}
+                                                    description={card.description.clone()}
+                                                    art={card.art()}
+                                                    name={card.name.clone()}
+                                                    abilities={card.abilities.clone()}
+                                                />
+                                            }
+                                        }).collect::<Html>()
+                                    }
+                                </table>
+                            }
                         }
                     }
-                    </div>
-                </div>
+                }
             </>
         };
     }
 
     return html! { <div>{"Loading..."}</div> };
 }
+
+// TODO remove this or replace with card picker

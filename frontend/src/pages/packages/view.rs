@@ -3,12 +3,12 @@ use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
-pub struct ViewProps {
+pub struct Props {
     pub package_id: String,
 }
 
 #[function_component(PackageView)]
-pub fn package_view(props: &ViewProps) -> Html {
+pub fn package_view(props: &Props) -> Html {
     let package_id = props.package_id.clone();
     let package = use_state(|| None);
     {

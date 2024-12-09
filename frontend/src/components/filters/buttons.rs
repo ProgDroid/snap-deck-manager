@@ -11,6 +11,7 @@ where
 {
     pub label: AttrValue,
     pub select: Callback<T>,
+    pub selected: T,
 }
 
 #[function_component(FilterButtons)]
@@ -26,7 +27,7 @@ where
             {
                 T::iter().map(|value| {
                     html! {
-                        <FilterButton<T> on_click={props.select.clone()} value={value} />
+                        <FilterButton<T> selected={value == props.selected} on_click={props.select.clone()} value={value} />
                     }
                 }).collect::<Html>()
             }

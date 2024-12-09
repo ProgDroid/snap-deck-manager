@@ -1,12 +1,11 @@
 use crate::{
-    components::{
+    components::{footer::Footer, header::Header},
+    pages::{
         cards::CardsView,
-        deck::{create::DeckCreate, display::DeckView, edit::DeckEdit},
-        footer::Footer,
-        header::Header,
-        packages::{create::PackageCreate, display::PackageView, edit::PackageEdit},
+        decks::{create::DeckCreate, edit::DeckEdit, list::Decks, view::DeckView},
+        home::HomePage,
+        packages::{create::PackageCreate, edit::PackageEdit, list::Packages, view::PackageView},
     },
-    pages::{decks::Decks, home::HomePage, packages::Packages},
     route::Route,
 };
 

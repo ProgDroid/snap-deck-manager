@@ -4,8 +4,12 @@ use crate::{
         packages::list as get_all_packages,
     },
     components::{
+        button::Button,
         card_picker::CardPicker,
         cards::{grid::CardGrid, grid_element::Display},
+        form::{Field as FormField, Form},
+        submit::Submit,
+        textbox::Textbox,
     },
     route::Route,
 };
@@ -123,7 +127,7 @@ pub fn deck_create() -> Html {
         let selected_cards = selected_cards;
         let deck_id = deck_id.clone();
 
-        Callback::from(move |()| {
+        Callback::from(move |_: Submit| {
             let deck_name = deck_name.clone();
             let selected_cards = selected_cards.clone();
             let deck_id = deck_id.clone();
@@ -149,22 +153,17 @@ pub fn deck_create() -> Html {
 
     return html! {
         <>
-            <div class="deck-form-container">
-                <div class="deck-name-create">
-                    <label for="deck-name">{"Deck Name:"}</label>
-                    <input type="text" id="deck-name" value={(*input_value).clone()} name="card-filter" oninput={on_input.clone()}/>
-                </div>
+            <Form class_prefix={"deck"}>
+                <FormField id={"deck-name-create"} class={""} label={"Deck Name"}>
+                    <Textbox id="deck-name" value={(*input_value).clone()} name="card-filter" on_input={on_input} />
+                </FormField>
 
-                <div class="selected-cards-container">
-                    <h2>{"Selected Cards:"}</h2>
+                <FormField id={"selected-cards-container"} class={"selected-cards-container"} label={"Selected Cards"}>
                     <CardGrid cards={sorted_selected_cards.clone()} display={Display::Simple} on_click={deselect_cards} />
-                </div>
-            </div>
+                </FormField>
+            </Form>
 
-            <button onclick={
-                let submit = submit.clone();
-                move |_| submit.emit(())
-            }>{"Submit"}</button>
+            <Button<Submit> on_click={submit} value={Submit::Submit} selected=false />
 
             <h2>{"Packages"}</h2>
             {

@@ -3,12 +3,12 @@ use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
-pub struct ViewProps {
+pub struct Props {
     pub deck_id: String,
 }
 
 #[function_component(DeckView)]
-pub fn deck_view(props: &ViewProps) -> Html {
+pub fn deck_view(props: &Props) -> Html {
     let deck_id = props.deck_id.clone();
     let deck = use_state(|| None);
     {

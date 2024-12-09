@@ -1,8 +1,10 @@
-use strum::{Display, EnumIter};
+use std::fmt::Display;
+
+use strum::EnumIter;
 
 use crate::components::IntoClass;
 
-#[derive(Eq, PartialEq, Default, Clone, Display, EnumIter)]
+#[derive(Eq, PartialEq, Default, Clone, EnumIter)]
 pub enum Cost {
     #[default]
     Unset,
@@ -15,6 +17,27 @@ pub enum Cost {
     Six,
     Seven,
     Eight,
+}
+
+impl Display for Cost {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Unset => "Unset",
+                Self::Zero => "0",
+                Self::One => "1",
+                Self::Two => "2",
+                Self::Three => "3",
+                Self::Four => "4",
+                Self::Five => "5",
+                Self::Six => "6",
+                Self::Seven => "7",
+                Self::Eight => "8",
+            }
+        )
+    }
 }
 
 impl IntoClass for Cost {

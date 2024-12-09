@@ -1,12 +1,15 @@
 use crate::{
     api::{
         cards::get_selectable as get_selectable_cards,
-        decks::{get as get_deck, update as update_deck},
-        packages::list as get_all_packages,
+        packages::{get as get_package, update as update_package},
     },
     components::{
+        button::Button,
         card_picker::CardPicker,
         cards::{grid::CardGrid, grid_element::Display},
+        form::{Field as FormField, Form},
+        submit::Submit,
+        textbox::Textbox,
     },
     route::Route,
 };
@@ -19,12 +22,12 @@ use yew_router::prelude::Redirect;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Props {
-    pub deck_id: String,
+    pub package_id: String,
 }
 
-#[function_component(DeckEdit)]
-pub fn deck_edit(props: &Props) -> Html {
-    let deck_id = props.deck_id.clone();
+#[function_component(PackageEdit)]
+pub fn package_edit(props: &Props) -> Html {
+    let package_id = props.package_id.clone();
 
     let input_value = use_state(String::default);
 
@@ -44,22 +47,18 @@ pub fn deck_edit(props: &Props) -> Html {
         .map(|card| card.id.clone())
         .collect();
 
-    let select_cards = if selected_ids.len() >= 12 {
-        Callback::from(|_| {})
-    } else {
-        {
-            let selected_cards = selected_cards.clone();
+    let select_cards = {
+        let selected_cards = selected_cards.clone();
 
-            Callback::from(move |cards: Vec<Card>| {
-                let mut new_selected_cards = (*selected_cards).clone();
+        Callback::from(move |cards: Vec<Card>| {
+            let mut new_selected_cards = (*selected_cards).clone();
 
-                for card in &cards {
-                    new_selected_cards.insert(card.id.clone(), (*card).clone());
-                }
+            for card in &cards {
+                new_selected_cards.insert(card.id.clone(), (*card).clone());
+            }
 
-                selected_cards.set(new_selected_cards);
-            })
-        }
+            selected_cards.set(new_selected_cards);
+        })
     };
 
     let deselect_cards = {
@@ -76,18 +75,18 @@ pub fn deck_edit(props: &Props) -> Html {
         })
     };
 
-    let deck = use_state(|| None);
+    let package = use_state(|| None);
     let all_cards = use_state(|| None);
     {
-        // let deck = deck.clone();
-        let deck_id = deck_id.clone();
+        // let package = package.clone();
+        let package_id = package_id.clone();
         let selected_cards = selected_cards.clone();
         let input_value = input_value.clone();
         let all_cards = all_cards.clone();
 
         use_effect_with((), move |()| {
-            let deck = deck.clone();
-            let deck_id = deck_id.clone();
+            let package = package.clone();
+            let package_id = package_id.clone();
             let selected_cards = selected_cards.clone();
             let input_value = input_value.clone();
             // let all_cards = all_cards.clone();
@@ -96,25 +95,25 @@ pub fn deck_edit(props: &Props) -> Html {
                 if let Ok(fetched_cards) = get_selectable_cards().await {
                     all_cards.set(Some(fetched_cards.clone()));
 
-                    let deck = deck.clone();
-                    let deck_id = deck_id.clone();
+                    let package = package.clone();
+                    let package_id = package_id.clone();
                     let selected_cards = selected_cards.clone();
                     let input_value = input_value.clone();
 
                     wasm_bindgen_futures::spawn_local(async move {
-                        if let Ok(fetched_deck) = get_deck(&deck_id).await {
-                            deck.set(Some(fetched_deck.clone()));
+                        if let Ok(fetched_package) = get_package(&package_id).await {
+                            package.set(Some(fetched_package.clone()));
 
                             let mut map: HashMap<String, Card> = HashMap::default();
 
                             for card in fetched_cards {
-                                if fetched_deck.cards.contains(&card.id) {
+                                if fetched_package.cards.contains(&card.id) {
                                     map.insert(card.id.clone(), card.clone());
                                 }
                             }
 
                             selected_cards.set(map);
-                            input_value.set(fetched_deck.name);
+                            input_value.set(fetched_package.name);
                         } else {
                             // TODO log e
                         }
@@ -145,40 +144,25 @@ pub fn deck_edit(props: &Props) -> Html {
     sorted_selected_cards
         .sort_unstable_by_key(|card| (card.cost, card.power, card.name.to_lowercase()));
 
-    let all_packages = use_state(Vec::default);
-    {
-        let all_packages = all_packages.clone();
-        use_effect_with((), move |()| {
-            wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(fetched_packages) = get_all_packages().await {
-                    all_packages.set(fetched_packages);
-                } else {
-                    // TODO log e
-                }
-            });
-            || ()
-        });
-    }
-
     let updated = use_state(|| false);
 
     let submit = {
-        let deck_name = input_value.clone();
+        let package_name = input_value.clone();
         let selected_cards = selected_cards;
-        let deck_id = deck_id.clone();
+        let package_id = package_id.clone();
         let updated = updated.clone();
 
-        Callback::from(move |()| {
-            let deck_name = deck_name.clone();
+        Callback::from(move |_: Submit| {
+            let package_name = package_name.clone();
             let selected_cards = selected_cards.clone();
-            let deck_id = deck_id.clone();
+            let package_id = package_id.clone();
             let updated = updated.clone();
 
             #[allow(clippy::equatable_if_let)]
             wasm_bindgen_futures::spawn_local(async move {
-                if let Ok(()) = update_deck(
-                    deck_id.clone(),
-                    (*deck_name).clone(),
+                if let Ok(()) = update_package(
+                    package_id.clone(),
+                    (*package_name).clone(),
                     (*selected_cards).values().cloned().collect::<Vec<Card>>(),
                 )
                 .await
@@ -192,50 +176,22 @@ pub fn deck_edit(props: &Props) -> Html {
     };
 
     if *updated {
-        return html! { <Redirect<Route> to={Route::DeckView { deck_id }} /> };
+        return html! { <Redirect<Route> to={Route::PackageView { package_id }} /> };
     }
 
     return html! {
         <>
-            <div class="deck-form-container">
-                <div class="deck-name-create">
-                    <label for="deck-name">{"Deck Name:"}</label>
-                    <input type="text" id="deck-name" value={(*input_value).clone()} name="card-filter" oninput={on_input.clone()}/>
-                </div>
+            <Form class_prefix={"package"}>
+                <FormField id={"package-name-create"} class={""} label={"Package Name"}>
+                    <Textbox id="package-name" value={(*input_value).clone()} name="card-filter" on_input={on_input} />
+                </FormField>
 
-                <div class="selected-cards-container">
-                    <h2>{"Selected Cards:"}</h2>
+                <FormField id={"selected-cards-container"} class={"selected-cards-container"} label={"Selected Cards"}>
                     <CardGrid cards={sorted_selected_cards.clone()} display={Display::Simple} on_click={deselect_cards} />
-                </div>
-            </div>
+                </FormField>
+            </Form>
 
-            <button onclick={
-                let submit = submit.clone();
-                move |_| submit.emit(())
-            }>{"Submit"}</button>
-
-            <h2>{"Packages"}</h2>
-            {
-                (*all_packages).iter().map(|package| {
-                    html! {
-                        <h3 onclick={
-                            let select_cards = select_cards.clone();
-
-                            let package = package.clone();
-
-                            move |_| {
-                                let mut cards: Vec<Card> = Vec::default();
-
-                                package.cards.iter().for_each(|card| {
-                                    cards.push(Card { id: card.clone(), ..Default::default() });
-                                });
-
-                                select_cards.emit(cards);
-                            }
-                        }>{package.name.clone()}</h3>
-                    }
-                }).collect::<Html>()
-            }
+            <Button<Submit> on_click={submit} value={Submit::Submit} selected=false />
 
             <h2>{"Card List"}</h2>
 

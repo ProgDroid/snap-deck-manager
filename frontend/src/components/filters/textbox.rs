@@ -1,3 +1,5 @@
+use crate::components::textbox::Textbox;
+
 use yew::prelude::*;
 
 #[derive(Clone, PartialEq, Eq)]
@@ -28,7 +30,7 @@ pub fn filter_textbox(props: &Props) -> Html {
     html! {
         <div class={props.filter_type.class()}>
             <label for="card-filter">{"Filter:"}</label>
-            <input type="text" id="card-filter" value={props.value.clone()} name="card-filter" oninput={props.on_input.clone()}/>
+            <Textbox id="card-filter" value={props.value.clone()} name="card-filter" on_input={props.on_input.clone()} />
         </div>
     }
 }

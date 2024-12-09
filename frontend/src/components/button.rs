@@ -7,6 +7,7 @@ where
 {
     pub on_click: Callback<T>,
     pub value: T,
+    pub selected: bool,
 }
 
 #[function_component(Button)]
@@ -14,8 +15,10 @@ pub fn button<T>(props: &Props<T>) -> Html
 where
     T: PartialEq + Clone + ToString + 'static,
 {
+    let class = if props.selected { "selected" } else { "" };
+
     html! {
-        <button onclick={
+        <button class={class} onclick={
             let on_click = props.on_click.clone();
             let value = props.value.clone();
 
