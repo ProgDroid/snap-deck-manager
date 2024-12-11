@@ -2,6 +2,7 @@ mod api;
 mod config;
 mod entities;
 mod repository;
+mod services;
 
 use api::{
     cards::get_cards,

@@ -35,6 +35,7 @@ struct RecordCard {
     pub secondary_colour: String,
     pub ring_colour: String,
     pub series: String,
+    pub share_code: String,
 }
 
 impl RecordCard {
@@ -54,6 +55,7 @@ impl RecordCard {
             secondary_colour: self.secondary_colour,
             ring_colour: self.ring_colour,
             series: CardSeries::from_string(self.series),
+            share_code: self.share_code,
         }
     }
 }
@@ -109,6 +111,7 @@ enum Operation {
     GetAllCards,
     GetSelectableCards,
     GetCards(Vec<String>),
+    GetCardsFromShareCode(Vec<String>),
 }
 
 impl SurrealDbRepository {
@@ -141,6 +144,7 @@ impl SurrealDbRepository {
             DEFINE FIELD IF NOT EXISTS secondary_colour ON TABLE card TYPE string READONLY;
             DEFINE FIELD IF NOT EXISTS ring_colour ON TABLE card TYPE string READONLY;
             DEFINE FIELD IF NOT EXISTS series ON TABLE card TYPE string;
+            DEFINE FIELD IF NOT EXISTS share_code ON TABLE card TYPE string;
 
             DEFINE TABLE IF NOT EXISTS deck SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE deck TYPE string;
@@ -224,8 +228,6 @@ impl SurrealDbRepository {
     pub async fn get_cards(&self, cards: Vec<String>) -> Vec<Card> {
         log(&Operation::GetCards(cards.clone()));
 
-        // TODO if this doesn't work, try a vec of Thing
-
         let sql = "
             SELECT * FROM card
             WHERE id in $cards
@@ -237,6 +239,25 @@ impl SurrealDbRepository {
             .collect::<Vec<Thing>>();
 
         let result = self.db.query(sql).bind(("cards", card_filter)).await;
+
+        let records: Vec<RecordCard> = result.unwrap().take(0).unwrap(); // TODO fix
+
+        // TODO there must be a better way, way too much processing
+        records
+            .into_iter()
+            .map(RecordCard::into_card)
+            .collect::<Vec<Card>>()
+    }
+
+    pub async fn get_cards_from_share_codes(&self, codes: Vec<String>) -> Vec<Card> {
+        log(&Operation::GetCardsFromShareCode(codes.clone()));
+
+        let sql = "
+            SELECT * FROM card
+            WHERE share_code in $codes
+        ";
+
+        let result = self.db.query(sql).bind(("codes", codes)).await;
 
         let records: Vec<RecordCard> = result.unwrap().take(0).unwrap(); // TODO fix
 
@@ -314,10 +335,12 @@ impl SurrealDbRepository {
     pub async fn update_deck(&self, deck: Deck) -> Result<()> {
         log(&Operation::PatchDeck(deck.clone()));
 
+        let deck_to_save = crate::entities::deck::Deck::from_model(&deck);
+
         let _ = self
             .db
             .update(Resource::from(("deck", deck.id.clone().unwrap()))) // TODO fix
-            .content(deck)
+            .content(deck_to_save)
             .await?;
 
         Ok(())
@@ -391,10 +414,12 @@ impl SurrealDbRepository {
     pub async fn update_package(&self, package: Package) -> Result<()> {
         log(&Operation::PatchPackage(package.clone()));
 
+        let package_to_save = crate::entities::package::Package::from_model(&package);
+
         let _ = self
             .db
             .update(Resource::from(("package", package.id.clone().unwrap()))) // TODO fix
-            .content(package)
+            .content(package_to_save)
             .await?;
 
         Ok(())

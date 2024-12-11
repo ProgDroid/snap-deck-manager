@@ -1,6 +1,6 @@
 use strum::IntoEnumIterator;
 
-use crate::components::{button::Button as FilterButton, IntoClass};
+use crate::components::{button::Button as FilterButton, label::Label, IntoClass};
 
 use yew::prelude::*;
 
@@ -23,7 +23,7 @@ where
 
     html! {
         <div class={class}>
-            <label>{props.label.clone()}</label>
+            <Label for_prop={""} text={props.label.clone()} />
             {
                 T::iter().map(|value| {
                     html! {

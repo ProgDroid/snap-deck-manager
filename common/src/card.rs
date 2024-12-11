@@ -18,6 +18,7 @@ pub struct Card {
     pub secondary_colour: String,
     pub ring_colour: String,
     pub series: CardSeries,
+    pub share_code: String,
 }
 
 impl Card {

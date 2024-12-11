@@ -17,3 +17,11 @@ pub async fn get_selectable() -> Result<Vec<Card>> {
 
     Ok(response.json().await?)
 }
+
+pub async fn get_from_share_code(code: String) -> Result<Vec<Card>> {
+    let url = format!("/api/cards?share_code={}", code);
+
+    let response = Request::get(&url).send().await?;
+
+    Ok(response.json().await?)
+}

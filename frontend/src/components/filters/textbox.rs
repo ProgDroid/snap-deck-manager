@@ -1,4 +1,4 @@
-use crate::components::textbox::Textbox;
+use crate::components::{label::Label, textbox::Textbox};
 
 use yew::prelude::*;
 
@@ -29,7 +29,7 @@ pub struct Props {
 pub fn filter_textbox(props: &Props) -> Html {
     html! {
         <div class={props.filter_type.class()}>
-            <label for="card-filter">{"Filter:"}</label>
+            <Label for_prop={"card-filter"} text={"Filter"} />
             <Textbox id="card-filter" value={props.value.clone()} name="card-filter" on_input={props.on_input.clone()} />
         </div>
     }

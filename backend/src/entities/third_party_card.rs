@@ -2,6 +2,8 @@ use common::{card::Card, card_series::CardSeries};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_aux::prelude::*;
 
+use super::share_code::ShareCode;
+
 #[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct ThirdPartyCard {
     #[serde(rename = "CardDefId")]
@@ -67,6 +69,7 @@ impl ThirdPartyCard {
     pub fn into_card_model(self) -> Card {
         let series = CardSeries::from_string(self.series);
         let released = !self.is_token && series != CardSeries::None;
+        let share_code = ShareCode::new(self.id.clone());
 
         Card {
             id: self.id,
@@ -83,6 +86,7 @@ impl ThirdPartyCard {
             secondary_colour: self.secondary_colour,
             ring_colour: self.ring_colour,
             series,
+            share_code: share_code.processed,
         }
     }
 }

@@ -5,6 +5,7 @@ use crate::{
         card_picker::CardPicker,
         cards::{grid::CardGrid, grid_element::Display},
         form::{Field as FormField, Form},
+        share_code_input::ShareCodeInput,
         submit::Submit,
         textbox::Textbox,
     },
@@ -169,7 +170,11 @@ where
 
     return html! {
         <>
-            <p>{(*input_value).clone()}</p>
+            {
+                props.given_object.as_ref().map_or_else(|| html! {
+                    <ShareCodeInput submit_cards={select_cards.clone()} />
+                }, |_| html!{})
+            }
             <Form class_prefix={class_prefix.clone()}>
                 <FormField id={format!("{}-name-create", class_prefix)} class={""} label={label}>
                     <Textbox id={format!("{}-name", class_prefix)} value={(*input_value).clone()} name="card-filter" on_input={on_input} />

@@ -8,6 +8,8 @@ where
     pub on_click: Callback<T>,
     pub value: T,
     pub selected: bool,
+    #[prop_or_default]
+    pub disabled: bool,
 }
 
 #[function_component(Button)]
@@ -18,7 +20,7 @@ where
     let class = if props.selected { "selected" } else { "" };
 
     html! {
-        <button class={class} onclick={
+        <button disabled={props.disabled} class={class} onclick={
             let on_click = props.on_click.clone();
             let value = props.value.clone();
 

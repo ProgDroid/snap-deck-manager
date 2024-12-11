@@ -1,5 +1,7 @@
 use yew::prelude::*;
 
+use crate::components::label::Label;
+
 #[derive(Properties, PartialEq, Clone)]
 pub struct Props {
     pub children: Html,
@@ -27,7 +29,7 @@ pub struct FieldProps {
 pub fn field(props: &FieldProps) -> Html {
     html! {
         <div class={format!("form-field {}", props.class.clone())}>
-            <label for={props.id.clone()}>{format!("{}:", props.label.clone())}</label>
+            <Label for_prop={props.id.clone()} text={props.label.clone()} />
             {props.children.clone()}
         </div>
     }

@@ -669,6 +669,7 @@ dependencies = [
  "actix-web",
  "actix-web-lab",
  "anyhow",
+ "base64 0.22.1",
  "common",
  "config-file",
  "env_logger",
