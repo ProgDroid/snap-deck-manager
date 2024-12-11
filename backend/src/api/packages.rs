@@ -5,7 +5,7 @@ use actix_web::{
 };
 use serde::{Deserialize, Serialize};
 
-use common::package::Package;
+use common::{card::Card, package::Package};
 
 use crate::repository::surrealdb::SurrealDbRepository;
 
@@ -22,7 +22,7 @@ pub async fn get(
 #[derive(Deserialize)]
 struct PostData {
     name: String,
-    cards: Vec<String>,
+    cards: Vec<Card>,
 }
 
 #[derive(Serialize)]

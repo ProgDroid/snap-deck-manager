@@ -1,21 +1,23 @@
 use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Default, Deserialize, Serialize, Clone)]
+use crate::card::Card;
+
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct Deck {
     pub id: Option<String>,
     pub name: String,
-    pub cards: Vec<String>,
+    pub cards: Vec<Card>,
 }
 
 // TODO distinguish between new deck (without ID) and loaded deck
 
-struct CardId {
+struct ShareCode {
     _source: String,
     processed: String,
 }
 
-impl CardId {
+impl ShareCode {
     /// Share code card names are as follows:
     /// Start with Card ID e.g. `SilverSable`
     /// Count characters e.g. 11
@@ -42,7 +44,7 @@ impl CardId {
 
 impl Deck {
     #[must_use]
-    pub const fn new(name: String, cards: Vec<String>) -> Self {
+    pub const fn new(name: String, cards: Vec<Card>) -> Self {
         Self {
             id: None,
             name,
@@ -55,7 +57,7 @@ impl Deck {
         let card_codes: Vec<String> = self
             .cards
             .iter()
-            .map(|card| CardId::new(card.clone()).processed)
+            .map(|card| ShareCode::new(card.id.clone()).processed)
             .collect();
 
         let deck_code = card_codes.join(",");
@@ -70,45 +72,44 @@ mod tests {
 
     #[test]
     fn test_card_id() {
-        let card_id = CardId::new(String::from("SilverSable"));
+        let card_id = ShareCode::new(String::from("SilverSable"));
 
         assert_eq!(card_id.processed, String::from("SlvrSblB"));
 
-        let card_id = CardId::new(String::from("Bast"));
+        let card_id = ShareCode::new(String::from("Bast"));
 
         assert_eq!(card_id.processed, String::from("Bst4"));
 
-        let card_id = CardId::new(String::from("Abomination"));
+        let card_id = ShareCode::new(String::from("Abomination"));
 
         assert_eq!(card_id.processed, String::from("AbmntnB"));
 
-        let card_id = CardId::new(String::from("RavonnaRenslayer"));
+        let card_id = ShareCode::new(String::from("RavonnaRenslayer"));
 
         assert_eq!(card_id.processed, String::from("RvnnRnslr10"));
 
-        let card_id = CardId::new(String::from("HighEvolutionary"));
+        let card_id = ShareCode::new(String::from("HighEvolutionary"));
 
         assert_eq!(card_id.processed, String::from("HghEvltnr10"));
 
-        let card_id = CardId::new(String::from("JeffTheBabyLandShark"));
+        let card_id = ShareCode::new(String::from("JeffTheBabyLandShark"));
 
         assert_eq!(card_id.processed, String::from("JffThBbLndShrk14"));
 
-        let card_id = CardId::new(String::from("LadyDeathstrike"));
+        let card_id = ShareCode::new(String::from("LadyDeathstrike"));
 
         assert_eq!(card_id.processed, String::from("LdDthstrkF"));
 
-        let card_id = CardId::new(String::from("NegasonicTeenageWarhead"));
+        let card_id = ShareCode::new(String::from("NegasonicTeenageWarhead"));
 
         assert_eq!(card_id.processed, String::from("NgsncTngWrhd17"));
 
-        let card_id = CardId::new(String::from("SpiderMan2099"));
+        let card_id = ShareCode::new(String::from("SpiderMan2099"));
 
         assert_eq!(card_id.processed, String::from("SpdrMn2099D"));
 
-        let card_id = CardId::new(String::from("SymbioteSpiderMan"));
+        let card_id = ShareCode::new(String::from("SymbioteSpiderMan"));
 
         assert_eq!(card_id.processed, String::from("SmbtSpdrMn11"));
     }
 }
-// TODO test with deck s7qy0od3v5qhsij2y5gg

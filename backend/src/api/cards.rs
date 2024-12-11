@@ -7,29 +7,32 @@ use actix_web::{
 use common::card::Card;
 use serde::Deserialize;
 
+use crate::repository::surrealdb::SurrealDbRepository;
+
 #[derive(Deserialize)]
 struct Filters {
     selectable_only: Option<String>,
+    ids: Option<Vec<String>>,
 }
 
 #[get("/cards")]
 pub async fn get_cards(
-    cards_data: Data<Vec<Card>>,
+    db: Data<SurrealDbRepository>,
     filters: Query<Filters>,
 ) -> Result<Json<Vec<Card>>> {
-    Ok(Json(if filters.selectable_only.is_some() {
-        cards_data
-            .into_inner()
-            .iter()
-            .filter(|&card| !card.is_token && card.source != "None" && !card.source.is_empty())
-            .cloned()
-            .collect()
-    } else {
-        cards_data.into_inner().to_vec()
-    }))
-}
+    let selectable_only = filters.selectable_only.is_some();
 
-// TODO work out how to actually get unreleased cards that aren't tokens or from locations
-// * seems like I need to parse SeriesStartDates and check if any entries exist for it to be a selectable non-token
-// * seems like I need to parse SeriesStartDates and check the first entry is in the future
-// * https://stackoverflow.com/questions/71876855/idiomatic-way-to-check-if-a-chronodatetimeutc-is-within-date-and-time-range
+    let ids = filters.ids.clone().unwrap_or_default();
+
+    let result = if ids.is_empty() {
+        if selectable_only {
+            db.get_all_selectable_cards().await
+        } else {
+            db.get_all_cards().await
+        }
+    } else {
+        db.get_cards(ids).await
+    };
+
+    Ok(Json(result))
+}

@@ -675,6 +675,7 @@ dependencies = [
  "log",
  "reqwest",
  "serde",
+ "serde-aux",
  "serde_json",
  "strum",
  "strum_macros",
@@ -1075,6 +1076,7 @@ dependencies = [
  "serde",
  "serde-aux",
  "serde_json",
+ "strum",
 ]
 
 [[package]]

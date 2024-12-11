@@ -1,8 +1,7 @@
 mod api;
 mod config;
+mod entities;
 mod repository;
-
-use std::collections::HashMap;
 
 use api::{
     cards::get_cards,
@@ -12,7 +11,6 @@ use api::{
         update as update_package,
     },
 };
-use common::card::Card;
 use config::{api::Api as ApiConfig, db::Db as DbConfig};
 use repository::surrealdb::SurrealDbRepository;
 
@@ -33,13 +31,11 @@ async fn main() -> Result<()> {
     let db_config = DbConfig::new()?;
 
     let repository = SurrealDbRepository::new(db_config).await?;
+    repository.update_all_cards().await?;
 
     let repository_data = Data::new(repository);
 
     let api_config = ApiConfig::new()?;
-
-    // TODO split this into another file
-    let card_data = Data::new(get_card_data().await?);
 
     // * This closure executes every time a new thread is spun up to handle a request
     Ok(HttpServer::new(move || {
@@ -48,7 +44,6 @@ async fn main() -> Result<()> {
         App::new()
             .wrap(logger)
             .app_data(repository_data.clone())
-            .app_data(card_data.clone())
             .service(
                 scope("/api")
                     .service(get_cards)
@@ -72,15 +67,4 @@ async fn main() -> Result<()> {
     .bind(api_config.to_address())?
     .run()
     .await?)
-}
-
-// TODO return actual error if data cannot be parsed
-async fn get_card_data() -> Result<Vec<Card>> {
-    let response: HashMap<String, Card> =
-        reqwest::get("https://static2.marvelsnap.pro/snap/do.php?cmd=getcards")
-            .await?
-            .json::<HashMap<String, Card>>()
-            .await?;
-
-    Ok(response.values().cloned().collect())
 }
