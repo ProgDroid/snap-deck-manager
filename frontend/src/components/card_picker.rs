@@ -21,13 +21,10 @@ pub struct Props {
 
 #[function_component(CardPicker)]
 pub fn card_picker(props: &Props) -> Html {
-    // TODO should cards be passed in as props?
     let cards = use_state(|| None);
     {
         let cards = cards.clone();
         use_effect_with((), move |()| {
-            // let cards = cards.clone();
-
             wasm_bindgen_futures::spawn_local(async move {
                 if let Ok(fetched_cards) = get_cards().await {
                     cards.set(Some(fetched_cards));
@@ -84,7 +81,6 @@ pub fn card_picker(props: &Props) -> Html {
     if let Some(cards) = &*cards {
         let mut filtered_cards: Vec<Card> = cards
             .iter()
-            .filter(|card| !props.excluded_cards.contains(card))
             .filter(|card| (*selected_cost).compare(card.cost))
             .filter(|card| {
                 card.name
@@ -122,7 +118,7 @@ pub fn card_picker(props: &Props) -> Html {
                     <div class="scroll-box">
                     {
                         html! {
-                            <CardGrid cards={filtered_cards.clone()} display={Display::Detailed} on_click={props.on_click.clone()}/>
+                            <CardGrid cards={filtered_cards.clone()} excluded_cards={props.excluded_cards.clone()} display={Display::Detailed} on_click={props.on_click.clone()}/>
                         }
                     }
                     </div>

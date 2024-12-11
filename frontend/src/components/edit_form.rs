@@ -176,7 +176,7 @@ where
                 </FormField>
 
                 <FormField id={"selected-cards-container"} class={"selected-cards-container"} label={"Selected Cards"}>
-                    <CardGrid cards={sorted_selected_cards.clone()} display={Display::Simple} on_click={deselect_cards} />
+                    <CardGrid cards={sorted_selected_cards.clone()} excluded_cards={Vec::default()} display={Display::Simple} on_click={deselect_cards} />
                 </FormField>
             </Form>
 

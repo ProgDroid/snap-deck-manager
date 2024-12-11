@@ -212,3 +212,11 @@ footer {
 button.selected {
     background: darkgrey;
 }
+
+.card-grid-container {
+    transition: filter .1s;
+}
+
+.excluded {
+    filter: grayscale(1);
+}

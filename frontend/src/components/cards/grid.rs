@@ -5,6 +5,7 @@ use yew::prelude::*;
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
     pub cards: Vec<Card>,
+    pub excluded_cards: Vec<Card>,
     pub display: Display,
     pub on_click: Callback<Vec<Card>>,
 }
@@ -15,11 +16,14 @@ pub fn card_grid(props: &Props) -> Html {
         <div class="card-grid">
             {
                 props.cards.iter().map(|card| {
+                    let excluded = props.excluded_cards.contains(card);
+
                     html! {
                         <GridElement
                             card={card.clone()}
                             display={props.display.clone()}
-                            on_click={props.on_click.clone()}
+                            on_click={if excluded { Callback::from(|_| {}) } else { props.on_click.clone() }}
+                            excluded={excluded}
                         />
                     }
                 }).collect::<Html>()

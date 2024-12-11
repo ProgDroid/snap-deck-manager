@@ -17,7 +17,7 @@ impl Api {
     pub fn new() -> Result<Self> {
         let path = match env::var("CONFIG_API") {
             Ok(val) => val,
-            Err(e) => {
+            Err(_e) => {
                 // TODO log e
                 "api.toml".to_owned()
             }

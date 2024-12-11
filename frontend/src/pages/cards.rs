@@ -127,7 +127,7 @@ pub fn cards_view() -> Html {
                     match *selected_view {
                         View::Grid => {
                             html! {
-                                <CardGrid cards={filtered_cards.clone()} display={Display::Detailed} on_click={Callback::from(move |_| {})}/>
+                                <CardGrid cards={filtered_cards.clone()} excluded_cards={Vec::default()} display={Display::Detailed} on_click={Callback::from(move |_| {})}/>
                             }
                         },
                         View::List => {

@@ -23,7 +23,7 @@ impl Db {
     pub fn new() -> Result<Self> {
         let path = match env::var("CONFIG_DB") {
             Ok(val) => val,
-            Err(e) => {
+            Err(_e) => {
                 // TODO log e
                 "database.toml".to_owned()
             }

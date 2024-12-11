@@ -13,14 +13,20 @@ pub struct Props {
     pub card: Card,
     pub display: Display,
     pub on_click: Callback<Vec<Card>>,
+    pub excluded: bool,
 }
 
 #[function_component(GridElement)]
 pub fn grid_element(props: &Props) -> Html {
+    let class = format!(
+        "card-grid-container{}",
+        if props.excluded { " excluded" } else { "" }
+    );
+
     let ability = Html::from_html_unchecked(props.card.description.clone().into());
 
     return html! {
-        <div class="card-grid-container" key={props.card.id.clone()} onclick={
+        <div class={class} key={props.card.id.clone()} onclick={
             let on_click = props.on_click.clone();
             let card = props.card.clone();
 
