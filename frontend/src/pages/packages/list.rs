@@ -1,5 +1,7 @@
 use crate::{
-    api::packages::list as get_packages, components::packages::list_element::PackageListElement,
+    api::packages::list as get_packages,
+    components::{card_preview::CardPreview, clickable::Clickable},
+    route::Route,
 };
 
 use yew::prelude::*;
@@ -28,7 +30,12 @@ pub fn packages() -> Html {
                 {
                     (*packages).iter().map(|package| {
                         html! {
-                            <PackageListElement id={package.id.clone().unwrap()} name={package.name.clone()} />
+                            <>
+                                <Clickable route={Route::PackageView { package_id: package.id.clone().unwrap() }}>
+                                    <h2>{package.name.clone()}</h2>
+                                    <CardPreview cards={package.cards.clone()} />
+                                </Clickable>
+                            </>
                         }
                     }).collect::<Html>()
                 }

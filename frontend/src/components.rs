@@ -11,9 +11,9 @@ use crate::{
 pub mod button;
 pub mod card_list;
 pub mod card_picker;
+pub mod card_preview;
 pub mod cards;
 pub mod clickable;
-pub mod deck;
 pub mod edit_form;
 pub mod filters;
 pub mod footer;
@@ -23,7 +23,6 @@ pub mod icon_link;
 pub mod label;
 pub mod logo;
 pub mod nav_link;
-pub mod packages;
 pub mod share_code_input;
 pub mod submit;
 pub mod textbox;

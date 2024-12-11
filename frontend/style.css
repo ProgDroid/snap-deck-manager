@@ -220,3 +220,28 @@ button.selected {
 .excluded {
     filter: grayscale(1);
 }
+
+.cards-preview {
+    position: relative;
+    min-height: 200px;
+}
+
+.cards-preview img {
+    width: 50%;
+    height: 50%;
+    margin: 0;
+}
+
+.cards-preview-0, .cards-preview-1, .cards-preview-2 {
+    position: absolute;
+}
+
+.cards-preview-1 {
+    left: 3rem;
+    top: 1rem;
+}
+
+.cards-preview-2 {
+    left: 6rem;
+    top: 2rem;
+}

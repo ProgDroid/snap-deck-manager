@@ -1,4 +1,8 @@
-use crate::{api::decks::list as get_decks, components::deck::list_element::DeckListElement};
+use crate::{
+    api::decks::list as get_decks,
+    components::{card_preview::CardPreview, clickable::Clickable},
+    route::Route,
+};
 
 use yew::prelude::*;
 
@@ -25,7 +29,12 @@ pub fn decks() -> Html {
                 {
                     (*decks).iter().map(|deck| {
                         html! {
-                            <DeckListElement id={deck.id.clone().unwrap()} name={deck.name.clone()} />
+                            <>
+                                <Clickable route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
+                                    <h2>{deck.name.clone()}</h2>
+                                    <CardPreview cards={deck.cards.clone()} />
+                                </Clickable>
+                            </>
                         }
                     }).collect::<Html>()
                 }

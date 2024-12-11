@@ -25,8 +25,6 @@ pub struct PostResponse {
 pub async fn create(name: String, cards: Vec<Card>) -> Result<PostResponse> {
     let url = "/api/package";
 
-    let card_ids: Vec<String> = cards.iter().map(|card| card.id.clone()).collect();
-
     let body = PostBody { name, cards };
 
     let response = Request::post(url).json(&body)?.send().await?;
@@ -48,8 +46,6 @@ struct PatchBody {
 
 pub async fn update(id: String, name: String, cards: Vec<Card>) -> Result<()> {
     let url = format!("/api/package/{id}");
-
-    let card_ids: Vec<String> = cards.iter().map(|card| card.id.clone()).collect();
 
     let body = PatchBody { name, cards };
 
