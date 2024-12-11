@@ -1,4 +1,9 @@
-use crate::{api::decks::get as get_deck, route::Route};
+use crate::{
+    api::decks::get as get_deck,
+    components::cards::{grid::CardGrid, grid_element::Display},
+    route::Route,
+};
+use common::card::Card;
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
@@ -37,6 +42,9 @@ pub fn deck_view(props: &Props) -> Html {
     if let Some(deck) = &*deck {
         let share_code = deck.share_code();
 
+        let mut cards = deck.cards.clone();
+        cards.sort_unstable_by_key(|card| (card.cost, card.power, card.name.to_lowercase()));
+
         return html! {
             <>
                 <table>
@@ -50,6 +58,9 @@ pub fn deck_view(props: &Props) -> Html {
                     </tr>
                 </table>
                 <button {onclick}>{"Edit"}</button>
+                <div class="selected-cards-container">
+                    <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
+                </div>
             </>
         };
     }

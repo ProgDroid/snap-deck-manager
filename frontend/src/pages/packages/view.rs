@@ -1,4 +1,9 @@
-use crate::{api::packages::get as get_package, route::Route};
+use crate::{
+    api::packages::get as get_package,
+    components::cards::{grid::CardGrid, grid_element::Display},
+    route::Route,
+};
+use common::card::Card;
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
@@ -35,6 +40,9 @@ pub fn package_view(props: &Props) -> Html {
     let onclick = Callback::from(move |_| navigator.push(&route));
 
     if let Some(package) = &*package {
+        let mut cards = package.cards.clone();
+        cards.sort_unstable_by_key(|card| (card.cost, card.power, card.name.to_lowercase()));
+
         return html! {
             <>
                 <table>
@@ -44,6 +52,9 @@ pub fn package_view(props: &Props) -> Html {
                     </tr>
                 </table>
                 <button {onclick}>{"Edit"}</button>
+                <div class="selected-cards-container">
+                    <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
+                </div>
             </>
         };
     }
