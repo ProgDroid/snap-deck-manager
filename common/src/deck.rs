@@ -1,4 +1,3 @@
-use base64::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::card::Card;
@@ -8,30 +7,19 @@ pub struct Deck {
     pub id: Option<String>,
     pub name: String,
     pub cards: Vec<Card>,
+    pub share_code: String,
 }
 
 // TODO distinguish between new deck (without ID) and loaded deck
 
 impl Deck {
     #[must_use]
-    pub const fn new(name: String, cards: Vec<Card>) -> Self {
+    pub const fn new(name: String, cards: Vec<Card>, share_code: String) -> Self {
         Self {
             id: None,
             name,
             cards,
+            share_code,
         }
-    }
-
-    #[must_use]
-    pub fn share_code(&self) -> String {
-        let card_codes: Vec<String> = self
-            .cards
-            .iter()
-            .map(|card| card.share_code.clone())
-            .collect();
-
-        let deck_code = card_codes.join(",");
-
-        BASE64_STANDARD.encode(deck_code)
     }
 }

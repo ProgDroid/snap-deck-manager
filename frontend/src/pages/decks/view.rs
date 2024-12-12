@@ -40,7 +40,7 @@ pub fn deck_view(props: &Props) -> Html {
     let onclick = Callback::from(move |_| navigator.push(&route));
 
     if let Some(deck) = &*deck {
-        let share_code = deck.share_code();
+        let share_code = deck.share_code.clone();
 
         let mut cards = deck.cards.clone();
         cards.sort_unstable_by_key(|card| (card.cost, card.power, card.name.to_lowercase()));

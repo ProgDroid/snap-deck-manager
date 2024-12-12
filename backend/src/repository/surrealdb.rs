@@ -13,7 +13,7 @@ use surrealdb::{
 
 use common::{card::Card, card_series::CardSeries, deck::Deck, package::Package};
 
-use crate::config::db::Db as DbConfig;
+use crate::{config::db::Db as DbConfig, services::share_code::encode_share_code_strings};
 
 use crate::entities::third_party_card::ThirdPartyCard;
 
@@ -69,10 +69,15 @@ struct RecordDeck {
 
 impl RecordDeck {
     fn into_deck(self, cards: Vec<Card>) -> Deck {
+        let codes: Vec<String> = cards.iter().map(|card| card.share_code.clone()).collect();
+
+        let share_code = encode_share_code_strings(&codes);
+
         Deck {
             id: Some((self.id.to_string()[5..]).to_owned()),
             name: self.name,
             cards,
+            share_code,
         }
     }
 }
