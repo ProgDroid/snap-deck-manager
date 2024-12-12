@@ -163,17 +163,19 @@ pub fn card_picker(props: &Props) -> Html {
         return html! {
             <>
                 <div id="card-picker" class="scroll-box-container">
-                    <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
-                    <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
-                    <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
-                    <FilterButtonsMultiSelect<Cost>
-                        label={"Cost"}
-                        select={cost_filter_select}
-                        selected={(*selected_costs).iter().cloned().collect::<Vec<Cost>>()}
-                        deselect={cost_filter_deselect}
-                        clear={cost_filter_clear}
-                    />
-                    <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
+                    <div class="filter-container">
+                        <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
+                        <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
+                        <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
+                        <FilterButtonsMultiSelect<Cost>
+                            label={"Cost"}
+                            select={cost_filter_select}
+                            selected={(*selected_costs).iter().cloned().collect::<Vec<Cost>>()}
+                            deselect={cost_filter_deselect}
+                            clear={cost_filter_clear}
+                        />
+                        <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
+                    </div>
 
                     <div class="scroll-box">
                     {

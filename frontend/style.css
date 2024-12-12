@@ -35,12 +35,14 @@ table, th, td {
     grid-template-columns: repeat( auto-fit, minmax(325px, 1fr) );
 }
 
-.selected-cards-container > .card-grid {
+.selected-cards-container .card-grid {
     grid-template-columns: repeat( auto-fill, minmax(250px, 1fr) );
+    height: 40vh;
 }
 
-.selected-cards-container > img {
+.selected-cards-container img {
     max-width: 250px;
+    max-height: 15vh;
 }
 
 .card-grid-container {
@@ -255,5 +257,11 @@ button.selected {
 .card-abilities {
     display: flex;
     justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.filter-container {
+    display: flex;
+    justify-content: space-around;
     flex-wrap: nowrap;
 }
