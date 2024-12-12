@@ -5,6 +5,7 @@ use crate::{
         filters::{
             buttons::FilterButtons,
             cost::Cost,
+            released_only::ReleasedOnly,
             sort::{Order as SortOrder, Sort},
             textbox::{FilterTextbox, Type as TextboxType},
         },
@@ -78,9 +79,23 @@ pub fn card_picker(props: &Props) -> Html {
         })
     };
 
+    let selected_released_only = use_state(ReleasedOnly::default);
+
+    let released_only_select = {
+        let selected_released_only = selected_released_only.clone();
+
+        Callback::from(move |released_only: ReleasedOnly| {
+            selected_released_only.set(released_only);
+        })
+    };
+
     if let Some(cards) = &*cards {
         let mut filtered_cards: Vec<Card> = cards
             .iter()
+            .filter(|card| match *selected_released_only {
+                ReleasedOnly::No => true,
+                ReleasedOnly::Yes => card.released,
+            })
             .filter(|card| (*selected_cost).compare(card.cost))
             .filter(|card| {
                 card.name
@@ -114,6 +129,7 @@ pub fn card_picker(props: &Props) -> Html {
                     <FilterButtons<SortOrder> label={"Sort Order:"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
                     <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
                     <FilterButtons<Cost> label={"Cost:"} select={cost_filter_select} selected={(*selected_cost).clone()} />
+                    <FilterButtons<ReleasedOnly> label={"Released Only:"} select={released_only_select} selected={(*selected_released_only).clone()} />
 
                     <div class="scroll-box">
                     {

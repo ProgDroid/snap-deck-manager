@@ -1,8 +1,10 @@
+use std::time::UNIX_EPOCH;
+
 use common::{card::Card, card_series::CardSeries};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_aux::prelude::*;
 
-use super::share_code::ShareCode;
+use super::{series_start_date::SeriesStartDate, share_code::ShareCode};
 
 #[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct ThirdPartyCard {
@@ -35,6 +37,11 @@ pub struct ThirdPartyCard {
     pub ring_colour: String,
     #[serde(rename = "CardSeriesDefId")]
     pub series: String,
+    #[serde(
+        rename = "SeriesStartDates",
+        deserialize_with = "deserialise_series_start_dates"
+    )]
+    pub series_start_dates: Vec<SeriesStartDate>,
 }
 
 fn deserialise_abilities<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
@@ -65,10 +72,42 @@ where
     Ok(s.replace('\\', ""))
 }
 
+fn deserialise_series_start_dates<'de, D>(deserializer: D) -> Result<Vec<SeriesStartDate>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let str: String = Deserialize::deserialize(deserializer)?;
+
+    let vec: Vec<SeriesStartDate> = serde_json::from_str(str.as_str()).unwrap_or_default();
+
+    Ok(vec)
+}
+
 impl ThirdPartyCard {
     pub fn into_card_model(self) -> Card {
-        let series = CardSeries::from_string(self.series);
-        let released = !self.is_token && series != CardSeries::None;
+        let mut series = CardSeries::from_string(self.series);
+        let now = std::time::SystemTime::now();
+        let timestamp = now.duration_since(UNIX_EPOCH).unwrap().as_secs(); // TODO handle
+
+        let mut released = false;
+
+        if !self.series_start_dates.is_empty() {
+            let start_date = self.series_start_dates.first().unwrap();
+
+            // TODO fix
+            if series == CardSeries::None {
+                series = CardSeries::from_string(start_date.data.clone());
+            }
+
+            #[allow(clippy::cast_sign_loss)]
+            if start_date.start_date < 0 {
+                released = true;
+            } else {
+                released = start_date.start_date as u64 <= timestamp;
+            }
+        }
+
+        let released = !self.is_token && released;
         let share_code = ShareCode::new(self.id.clone());
 
         Card {

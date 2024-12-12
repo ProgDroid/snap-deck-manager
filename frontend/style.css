@@ -88,6 +88,12 @@ table, th, td {
     font-weight: bold;
 }
 
+.pill.error {
+    background-color: #a11414;
+    color: white;
+    font-weight: bold;
+}
+
 .icon-container {
     display: flex;
     justify-content: center;

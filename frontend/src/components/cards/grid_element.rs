@@ -42,6 +42,7 @@ pub fn grid_element(props: &Props) -> Html {
                             props.card.abilities.clone().into_iter().map(|ability| html! { <span class="pill info">{ability}</span> }).collect::<Vec<Html>>()
                         }</span>
                     }
+                    { if props.card.released { html! {} } else { html! { <span class="pill error">{"Unreleased"}</span>} } }
                 }
             </div>
         </div>
