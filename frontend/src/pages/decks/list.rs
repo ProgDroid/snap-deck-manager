@@ -32,6 +32,7 @@ pub fn decks() -> Html {
                             <>
                                 <Clickable route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
                                     <h2>{deck.name.clone()}</h2>
+                                    <p>{format!("{} cards", deck.cards.len())}</p>
                                     <CardPreview cards={deck.cards.clone()} />
                                 </Clickable>
                             </>

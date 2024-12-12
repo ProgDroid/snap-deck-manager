@@ -33,6 +33,7 @@ pub fn packages() -> Html {
                             <>
                                 <Clickable route={Route::PackageView { package_id: package.id.clone().unwrap() }}>
                                     <h2>{package.name.clone()}</h2>
+                                    <p>{format!("{} cards", package.cards.len())}</p>
                                     <CardPreview cards={package.cards.clone()} />
                                 </Clickable>
                             </>
