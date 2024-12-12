@@ -1,9 +1,13 @@
+use std::collections::HashSet;
+
 use crate::{
     api::cards::get_selectable as get_cards,
     components::{
         cards::{grid::CardGrid, grid_element::Display},
         filters::{
             buttons::FilterButtons,
+            buttons_multi_select::FilterButtonsMultiSelect,
+            clear::Clear,
             cost::Cost,
             released_only::ReleasedOnly,
             sort::{Order as SortOrder, Sort},
@@ -49,13 +53,37 @@ pub fn card_picker(props: &Props) -> Html {
 
     let filter_value = (*input_value).clone();
 
-    let selected_cost = use_state(Cost::default);
+    let selected_costs = use_state(HashSet::<Cost>::default);
 
     let cost_filter_select = {
-        let selected_cost = selected_cost.clone();
+        let selected_costs = selected_costs.clone();
 
         Callback::from(move |cost: Cost| {
-            selected_cost.set(cost);
+            let mut set = (*selected_costs).clone();
+
+            set.insert(cost);
+
+            selected_costs.set(set);
+        })
+    };
+
+    let cost_filter_deselect = {
+        let selected_costs = selected_costs.clone();
+
+        Callback::from(move |cost: Cost| {
+            let mut set = (*selected_costs).clone();
+
+            set.remove(&cost);
+
+            selected_costs.set(set);
+        })
+    };
+
+    let cost_filter_clear = {
+        let selected_costs = selected_costs.clone();
+
+        Callback::from(move |_: Clear| {
+            selected_costs.set(HashSet::<Cost>::default());
         })
     };
 
@@ -96,7 +124,17 @@ pub fn card_picker(props: &Props) -> Html {
                 ReleasedOnly::No => true,
                 ReleasedOnly::Yes => card.released,
             })
-            .filter(|card| (*selected_cost).compare(card.cost))
+            .filter(|card| {
+                if (*selected_costs).is_empty() {
+                    true
+                } else {
+                    (*selected_costs)
+                        .iter()
+                        .filter(|cost| cost.compare(card.cost))
+                        .count()
+                        > 0
+                }
+            })
             .filter(|card| {
                 card.name
                     .to_lowercase()
@@ -128,7 +166,13 @@ pub fn card_picker(props: &Props) -> Html {
                     <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
                     <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
                     <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
-                    <FilterButtons<Cost> label={"Cost"} select={cost_filter_select} selected={(*selected_cost).clone()} />
+                    <FilterButtonsMultiSelect<Cost>
+                        label={"Cost"}
+                        select={cost_filter_select}
+                        selected={(*selected_costs).iter().cloned().collect::<Vec<Cost>>()}
+                        deselect={cost_filter_deselect}
+                        clear={cost_filter_clear}
+                    />
                     <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
 
                     <div class="scroll-box">

@@ -4,10 +4,8 @@ use strum::EnumIter;
 
 use crate::components::IntoClass;
 
-#[derive(Eq, PartialEq, Default, Clone, EnumIter)]
+#[derive(Eq, PartialEq, Clone, EnumIter, Hash)]
 pub enum Cost {
-    #[default]
-    Unset,
     Zero,
     One,
     Two,
@@ -25,7 +23,6 @@ impl Display for Cost {
             f,
             "{}",
             match self {
-                Self::Unset => "Unset",
                 Self::Zero => "0",
                 Self::One => "1",
                 Self::Two => "2",
@@ -49,7 +46,6 @@ impl IntoClass for Cost {
 impl Cost {
     pub const fn compare(&self, value: i8) -> bool {
         match self {
-            Self::Unset => true,
             Self::Zero => value == 0,
             Self::One => value == 1,
             Self::Two => value == 2,
