@@ -38,7 +38,7 @@ pub fn grid_element(props: &Props) -> Html {
                 if props.display == Display::Detailed {
                     <p>{ability}</p>
                     if !props.card.abilities.is_empty() {
-                        <span>{
+                        <span class="card-abilities">{
                             props.card.abilities.clone().into_iter().map(|ability| html! { <span class="pill info">{ability}</span> }).collect::<Vec<Html>>()
                         }</span>
                     }

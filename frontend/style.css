@@ -251,3 +251,9 @@ button.selected {
     left: 6rem;
     top: 2rem;
 }
+
+.card-abilities {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+}

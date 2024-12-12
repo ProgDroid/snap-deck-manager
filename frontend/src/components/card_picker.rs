@@ -125,11 +125,11 @@ pub fn card_picker(props: &Props) -> Html {
         return html! {
             <>
                 <div id="card-picker" class="scroll-box-container">
-                    <FilterButtons<Sort> label={"Sort:"} select={sort_filter_select} selected={(*selected_sort).clone()} />
-                    <FilterButtons<SortOrder> label={"Sort Order:"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
+                    <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
+                    <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
                     <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
-                    <FilterButtons<Cost> label={"Cost:"} select={cost_filter_select} selected={(*selected_cost).clone()} />
-                    <FilterButtons<ReleasedOnly> label={"Released Only:"} select={released_only_select} selected={(*selected_released_only).clone()} />
+                    <FilterButtons<Cost> label={"Cost"} select={cost_filter_select} selected={(*selected_cost).clone()} />
+                    <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
 
                     <div class="scroll-box">
                     {
