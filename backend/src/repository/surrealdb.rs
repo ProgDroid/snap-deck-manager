@@ -278,7 +278,10 @@ impl SurrealDbRepository {
     pub async fn create_deck(&self, deck: Deck) -> Option<Thing> {
         log(&Operation::PostDeck(deck.clone()));
 
-        let records: Result<Option<RecordDeck>, _> = self.db.create("deck").content(deck).await;
+        let deck_to_save = crate::entities::deck::Deck::from_model(&deck);
+
+        let records: Result<Option<RecordDeck>, _> =
+            self.db.create("deck").content(deck_to_save).await;
 
         match records {
             Ok(inner) => inner.map(|record| record.id),
@@ -356,8 +359,10 @@ impl SurrealDbRepository {
     pub async fn create_package(&self, package: Package) -> Option<Thing> {
         log(&Operation::PostPackage(package.clone()));
 
+        let package_to_save = crate::entities::package::Package::from_model(&package);
+
         let records: Result<Option<RecordPackage>, _> =
-            self.db.create("package").content(package).await;
+            self.db.create("package").content(package_to_save).await;
 
         match records {
             Ok(inner) => inner.map(|record| record.id),
