@@ -7,6 +7,7 @@ pub enum CardSeries {
     None,
     Starter,
     Recruit,
+    Series0,
     Series1,
     Series2,
     Series3,
@@ -24,6 +25,7 @@ impl CardSeries {
         match value.into().as_str() {
             "Starter" => Self::Starter,
             "Recruit" => Self::Recruit,
+            "Series0" => Self::Series0,
             "Series1" => Self::Series1,
             "Series2" => Self::Series2,
             "Series3" => Self::Series3,
