@@ -1,7 +1,7 @@
 use actix_web::{
-    get,
+    get, post,
     web::{Data, Json, Query},
-    Result,
+    HttpResponse, Result,
 };
 
 use common::card::Card;
@@ -44,4 +44,13 @@ pub async fn get_cards(
     };
 
     Ok(Json(result))
+}
+
+#[post("/cards/update")]
+pub async fn update_all_cards(db: Data<SurrealDbRepository>) -> Result<HttpResponse> {
+    db.update_all_cards()
+        .await
+        .expect("Could not update all cards");
+
+    Ok(HttpResponse::Ok().finish())
 }

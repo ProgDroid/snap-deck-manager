@@ -22,4 +22,6 @@ pub enum Route {
     PackageEdit { package_id: String },
     #[at("/package/create")]
     PackageCreate,
+    #[at("/cards/update")]
+    UpdateCards,
 }

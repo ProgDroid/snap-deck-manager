@@ -117,6 +117,7 @@ enum Operation {
     GetSelectableCards,
     GetCards(Vec<String>),
     GetCardsFromShareCode(Vec<String>),
+    UpdateAllCards,
 }
 
 impl SurrealDbRepository {
@@ -171,6 +172,8 @@ impl SurrealDbRepository {
     // ! Cards
 
     pub async fn update_all_cards(&self) -> Result<()> {
+        log(&Operation::UpdateAllCards);
+
         let response: HashMap<String, ThirdPartyCard> =
             reqwest::get("https://static2.marvelsnap.pro/snap/do.php?cmd=getcards")
                 .await?

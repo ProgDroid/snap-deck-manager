@@ -16,7 +16,8 @@ pub fn home_page() -> Html {
             <IconLink icon_type={Type::Deck} label={"New Deck"} route={Route::DeckCreate} />
             <IconLink icon_type={Type::Package} label={"Packages"} route={Route::Packages} />
             <IconLink icon_type={Type::Package} label={"New Package"} route={Route::PackageCreate} />
-            // <IconLink icon_type={Type::Cog} label={"Settings"} route={Route::CardsView} />
+            <IconLink icon_type={Type::Cog} label={"Update Cards"} route={Route::UpdateCards} />
+            // <Button<Submit> on_click={show_modal} value={Submit::Submit} selected={false} />
         </VerticalCentreContainer>
     };
 }

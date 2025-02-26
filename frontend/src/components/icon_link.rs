@@ -6,7 +6,7 @@ use crate::{components::clickable::Clickable, route::Route};
 pub enum Type {
     Star,
     Deck,
-    // Cog,
+    Cog,
     Package,
 }
 
@@ -15,7 +15,7 @@ impl Type {
         String::from(match self {
             Self::Star => "https://upload.wikimedia.org/wikipedia/commons/f/fd/A_star.png",
             Self::Deck => "https://images.rawpixel.com/image_png_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L2pvYjcyNC0xODMtcC5wbmc.png",
-            // Self::Cog => "https://upload.wikimedia.org/wikipedia/commons/4/42/Cogwheel.png",
+            Self::Cog => "https://upload.wikimedia.org/wikipedia/commons/4/42/Cogwheel.png",
             Self::Package => "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR640OE9MnaLEjJ3Y2pKRtnyyVuuqRJKzU-1Q&s",
         })
     }
@@ -24,7 +24,7 @@ impl Type {
         String::from(match self {
             Self::Star => "star",
             Self::Deck => "deck",
-            // Self::Cog => "cog",
+            Self::Cog => "cog",
             Self::Package => "package",
         })
     }

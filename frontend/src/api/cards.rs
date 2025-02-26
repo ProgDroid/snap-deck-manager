@@ -25,3 +25,11 @@ pub async fn get_from_share_code(code: String) -> Result<Vec<Card>> {
 
     Ok(response.json().await?)
 }
+
+pub async fn update_all_cards() -> Result<()> {
+    let url = "/api/cards/update";
+
+    let _ = Request::post(&url).send().await?;
+
+    Ok(())
+}

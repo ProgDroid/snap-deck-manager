@@ -2,6 +2,7 @@ use crate::{
     components::{footer::Footer, header::Header},
     pages::{
         cards::CardsView,
+        cards_update::UpdateCards,
         decks::{create::DeckCreate, edit::DeckEdit, list::Decks, view::DeckView},
         home::HomePage,
         packages::{create::PackageCreate, edit::PackageEdit, list::Packages, view::PackageView},
@@ -49,6 +50,9 @@ fn switch(route: Route) -> Html {
                     Route::PackageCreate => html! {
                         <PackageCreate />
                     },
+                    Route::UpdateCards => html! {
+                        <UpdateCards />
+                    }
                 }
             }
             </main>
