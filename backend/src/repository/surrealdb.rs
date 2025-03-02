@@ -155,7 +155,7 @@ impl SurrealDbRepository {
             .await?;
 
         db.query(
-            "
+            r#"
             DEFINE TABLE IF NOT EXISTS card SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE card TYPE string;
             DEFINE FIELD IF NOT EXISTS description ON TABLE card TYPE string;
@@ -176,11 +176,11 @@ impl SurrealDbRepository {
             DEFINE FIELD IF NOT EXISTS name ON TABLE game_mode TYPE string;
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE game_mode FIELDS name UNIQUE;
 
-            CREATE game_mode:Ranked SET name = \"Ranked\";
-            CREATE game_mode:Conquest SET name = \"Conquest\";
-            CREATE game_mode:DeadpoolsDiner SET name = \"Deadpool's Diner\";
-            CREATE game_mode:HighVoltage SET name = \"High Voltage\";
-            CREATE game_mode:SanctumShowdown SET name = \"Sanctum Showdown\";
+            CREATE game_mode:Ranked SET name = "Ranked";
+            CREATE game_mode:Conquest SET name = "Conquest";
+            CREATE game_mode:DeadpoolsDiner SET name = "Deadpool's Diner";
+            CREATE game_mode:HighVoltage SET name = "High Voltage";
+            CREATE game_mode:SanctumShowdown SET name = "Sanctum Showdown";
 
             DEFINE TABLE IF NOT EXISTS deck SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE deck TYPE string;
@@ -193,7 +193,7 @@ impl SurrealDbRepository {
             DEFINE FIELD IF NOT EXISTS cards ON TABLE package TYPE array<string, 12>;
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE package FIELDS name UNIQUE;
 
-            ",
+            "#,
         )
         .await?;
 
