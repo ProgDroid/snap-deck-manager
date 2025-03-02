@@ -1,6 +1,9 @@
 use crate::{
     api::decks::get as get_deck,
-    components::cards::{grid::CardGrid, grid_element::Display},
+    components::{
+        cards::{grid::CardGrid, grid_element::Display},
+        pill::{Class, DefaultValue, Pill},
+    },
     route::Route,
 };
 use common::card::Card;
@@ -45,6 +48,8 @@ pub fn deck_view(props: &Props) -> Html {
         let mut cards = deck.cards.clone();
         cards.sort_unstable_by_key(|card| (card.cost, card.power, card.name.to_lowercase()));
 
+        let on_click: Callback<DefaultValue> = Callback::default();
+
         return html! {
             <>
                 <table>
@@ -61,9 +66,20 @@ pub fn deck_view(props: &Props) -> Html {
                 <div class="selected-cards-container">
                     <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
                 </div>
+                <div>
+                {
+                    deck.game_modes.iter().map(|game_mode| {
+                        html! {
+                            <Pill<DefaultValue> class={Class::Success} content={game_mode.name.clone()} on_click={on_click.clone()} value={DefaultValue::default()} />
+                        }
+                    }).collect::<Html>()
+                }
+                </div>
             </>
         };
     }
+
+    // TODO fix game modes not saving
 
     return html! { <div>{"Loading..."}</div> };
 }

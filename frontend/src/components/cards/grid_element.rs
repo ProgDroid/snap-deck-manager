@@ -1,3 +1,4 @@
+use crate::components::pill::{Class, DefaultValue, Pill};
 use common::card::Card;
 use yew::prelude::*;
 
@@ -25,6 +26,8 @@ pub fn grid_element(props: &Props) -> Html {
 
     let ability = Html::from_html_unchecked(props.card.description.clone().into());
 
+    let on_click: Callback<DefaultValue> = Callback::default();
+
     return html! {
         <div class={class} key={props.card.id.clone()} onclick={
             let on_click = props.on_click.clone();
@@ -39,10 +42,10 @@ pub fn grid_element(props: &Props) -> Html {
                     <p>{ability}</p>
                     if !props.card.abilities.is_empty() {
                         <span class="card-abilities">{
-                            props.card.abilities.clone().into_iter().map(|ability| html! { <span class="pill info">{ability}</span> }).collect::<Vec<Html>>()
+                            props.card.abilities.clone().into_iter().map(|ability| html! { <Pill<DefaultValue> class={Class::Info} content={ability} on_click={on_click.clone()} value={DefaultValue::default()} /> }).collect::<Vec<Html>>()
                         }</span>
                     }
-                    { if props.card.released { html! {} } else { html! { <span class="pill error">{"Unreleased"}</span>} } }
+                    { if props.card.released { html! {} } else { html! { <Pill<DefaultValue> class={Class::Error} content={"Unreleased"} on_click={on_click.clone()} value={DefaultValue::default()} /> } } }
                 }
             </div>
         </div>

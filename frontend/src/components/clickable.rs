@@ -9,6 +9,7 @@ pub struct Props {
     pub route: Route,
 }
 
+// TODO make this more obviously for routes
 #[function_component(Clickable)]
 pub fn clickable(props: &Props) -> Html {
     let navigator = use_navigator().unwrap(); // TODO fix

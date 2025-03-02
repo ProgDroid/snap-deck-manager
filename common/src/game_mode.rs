@@ -1,26 +1,15 @@
+use std::fmt::Display;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq, Eq)]
-pub enum GameMode {
-    #[default]
-    Ranked,
-    Conquest,
-    DeadpoolsDiner,
-    HighVoltage,
-    SanctumShowdown,
+pub struct GameMode {
+    pub id: String,
+    pub name: String,
 }
 
-impl GameMode {
-    pub fn from_string<S>(value: S) -> Self
-    where
-        S: Into<String>,
-    {
-        match value.into().as_str() {
-            "Conquest" => Self::Conquest,
-            "DeadpoolsDiner" => Self::DeadpoolsDiner,
-            "HighVoltage" => Self::HighVoltage,
-            "SanctumShowdown" => Self::SanctumShowdown,
-            _ => Self::Ranked,
-        }
+impl Display for GameMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
     }
 }

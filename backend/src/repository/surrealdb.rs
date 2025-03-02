@@ -103,6 +103,21 @@ impl RecordPackage {
     }
 }
 
+#[derive(Deserialize, Debug)]
+struct RecordGameMode {
+    pub id: Thing,
+    pub name: String,
+}
+
+impl RecordGameMode {
+    fn into_game_mode(self) -> GameMode {
+        GameMode {
+            id: (self.id.to_string()[10..]).to_owned(),
+            name: self.name,
+        }
+    }
+}
+
 pub struct SurrealDbRepository {
     db: Surreal<Client>,
 }
@@ -122,6 +137,7 @@ enum Operation {
     GetCards(Vec<String>),
     GetCardsFromShareCode(Vec<String>),
     UpdateAllCards,
+    GetAllGameModes,
 }
 
 impl SurrealDbRepository {
@@ -160,10 +176,16 @@ impl SurrealDbRepository {
             DEFINE FIELD IF NOT EXISTS name ON TABLE game_mode TYPE string;
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE game_mode FIELDS name UNIQUE;
 
+            CREATE game_mode:Ranked SET name = \"Ranked\";
+            CREATE game_mode:Conquest SET name = \"Conquest\";
+            CREATE game_mode:DeadpoolsDiner SET name = \"Deadpool's Diner\";
+            CREATE game_mode:HighVoltage SET name = \"High Voltage\";
+            CREATE game_mode:SanctumShowdown SET name = \"Sanctum Showdown\";
+
             DEFINE TABLE IF NOT EXISTS deck SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE deck TYPE string;
             DEFINE FIELD IF NOT EXISTS cards ON TABLE deck TYPE array<string, 12>;
-            DEFINE FIELD IF NOT EXISTS game_mode ON TABLE card TYPE array<record<game_mode>>;
+            DEFINE FIELD IF NOT EXISTS game_modes ON TABLE deck TYPE array<record<game_mode>> DEFAULT ALWAYS [];
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE deck FIELDS name UNIQUE;
 
             DEFINE TABLE IF NOT EXISTS package SCHEMAFULL;
@@ -330,26 +352,25 @@ impl SurrealDbRepository {
     pub async fn get_all_decks(&self) -> Vec<Deck> {
         log(&Operation::GetDecks);
 
-        let records: Result<Vec<RecordDeck>, _> = self.db.select("deck").await;
+        let sql = "
+            SELECT * FROM deck
+            FETCH game_modes
+        ";
+
+        let result = self.db.query(sql).await;
+
+        let records: Vec<RecordDeck> = result.unwrap().take(0).unwrap(); // TODO fix
 
         // TODO there must be a better way, way too much processing
-        match records {
-            Ok(val) => {
-                let mut decks = Vec::default();
+        let mut decks = Vec::default();
 
-                for record in val {
-                    let cards = self.get_cards(record.cards.clone()).await;
+        for record in records {
+            let cards = self.get_cards(record.cards.clone()).await;
 
-                    decks.push(RecordDeck::into_deck(record, cards));
-                }
-
-                decks
-            }
-            Err(_e) => {
-                // TODO log e
-                Vec::default()
-            }
+            decks.push(RecordDeck::into_deck(record, cards));
         }
+
+        decks
     }
 
     pub async fn update_deck(&self, deck: Deck) -> Result<()> {
@@ -445,6 +466,21 @@ impl SurrealDbRepository {
             .await?;
 
         Ok(())
+    }
+
+    // ! Game Modes
+
+    pub async fn get_all_game_modes(&self) -> Vec<GameMode> {
+        log(&Operation::GetAllGameModes);
+
+        let records: Result<Vec<RecordGameMode>, _> = self.db.select("game_mode").await;
+
+        // TODO there must be a better way, way too much processing
+        records.map_or(Vec::default(), |list| {
+            list.into_iter()
+                .map(RecordGameMode::into_game_mode)
+                .collect::<Vec<GameMode>>()
+        })
     }
 }
 

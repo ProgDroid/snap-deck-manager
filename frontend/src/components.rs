@@ -1,4 +1,4 @@
-use common::{card::Card, deck::Deck, package::Package};
+use common::{card::Card, deck::Deck, game_mode::GameMode, package::Package};
 
 use crate::{
     api::{
@@ -23,6 +23,7 @@ pub mod icon_link;
 pub mod label;
 pub mod logo;
 pub mod nav_link;
+pub mod pill;
 pub mod share_code_input;
 pub mod submit;
 pub mod textbox;
@@ -71,11 +72,20 @@ pub trait CardCollection {
 
     fn cards(&self) -> Vec<Card>;
 
-    fn display_packages(&self) -> bool;
+    fn display_packages() -> bool;
 
-    async fn create(name: String, cards: Vec<Card>) -> Option<String>;
+    fn game_modes(&self) -> Vec<GameMode>;
 
-    async fn update(id: String, name: String, cards: Vec<Card>) -> Option<String>;
+    fn display_game_modes() -> bool;
+
+    async fn create(name: String, cards: Vec<Card>, game_modes: Vec<GameMode>) -> Option<String>;
+
+    async fn update(
+        id: String,
+        name: String,
+        cards: Vec<Card>,
+        game_modes: Vec<GameMode>,
+    ) -> Option<String>;
 }
 
 impl CardCollection for Deck {
@@ -91,12 +101,20 @@ impl CardCollection for Deck {
         self.cards.clone()
     }
 
-    fn display_packages(&self) -> bool {
+    fn display_packages() -> bool {
         true
     }
 
-    async fn create(name: String, cards: Vec<Card>) -> Option<String> {
-        match create_deck(name, cards).await {
+    fn game_modes(&self) -> Vec<GameMode> {
+        self.game_modes.clone()
+    }
+
+    fn display_game_modes() -> bool {
+        true
+    }
+
+    async fn create(name: String, cards: Vec<Card>, game_modes: Vec<GameMode>) -> Option<String> {
+        match create_deck(name, cards, game_modes).await {
             Ok(response) => Some(response.id),
             Err(_e) => {
                 // TODO log e
@@ -105,8 +123,13 @@ impl CardCollection for Deck {
         }
     }
 
-    async fn update(id: String, name: String, cards: Vec<Card>) -> Option<String> {
-        match update_deck(id.clone(), name, cards).await {
+    async fn update(
+        id: String,
+        name: String,
+        cards: Vec<Card>,
+        game_modes: Vec<GameMode>,
+    ) -> Option<String> {
+        match update_deck(id.clone(), name, cards, game_modes).await {
             Ok(()) => Some(id),
             Err(_e) => {
                 // TODO log e
@@ -129,11 +152,19 @@ impl CardCollection for Package {
         self.cards.clone()
     }
 
-    fn display_packages(&self) -> bool {
+    fn display_packages() -> bool {
         false
     }
 
-    async fn create(name: String, cards: Vec<Card>) -> Option<String> {
+    fn game_modes(&self) -> Vec<GameMode> {
+        Vec::default()
+    }
+
+    fn display_game_modes() -> bool {
+        false
+    }
+
+    async fn create(name: String, cards: Vec<Card>, _game_modes: Vec<GameMode>) -> Option<String> {
         match create_package(name, cards).await {
             Ok(response) => Some(response.id),
             Err(_e) => {
@@ -143,7 +174,12 @@ impl CardCollection for Package {
         }
     }
 
-    async fn update(id: String, name: String, cards: Vec<Card>) -> Option<String> {
+    async fn update(
+        id: String,
+        name: String,
+        cards: Vec<Card>,
+        _game_modes: Vec<GameMode>,
+    ) -> Option<String> {
         match update_package(id.clone(), name, cards).await {
             Ok(()) => Some(id),
             Err(_e) => {

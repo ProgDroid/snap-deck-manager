@@ -7,6 +7,7 @@ mod services;
 use api::{
     cards::{get_cards, update_all_cards},
     decks::{create as create_deck, get as get_deck, list as get_decks, update as update_deck},
+    game_modes::get_game_modes,
     packages::{
         create as create_package, get as get_package, list as get_packages,
         update as update_package,
@@ -56,7 +57,8 @@ async fn main() -> Result<()> {
                     .service(create_package)
                     .service(get_packages)
                     .service(update_package)
-                    .service(update_all_cards),
+                    .service(update_all_cards)
+                    .service(get_game_modes),
             )
             .service(
                 spa()
