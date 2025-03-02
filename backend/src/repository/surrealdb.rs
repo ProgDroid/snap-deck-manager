@@ -11,7 +11,9 @@ use surrealdb::{
     Surreal,
 };
 
-use common::{card::Card, card_series::CardSeries, deck::Deck, package::Package};
+use common::{
+    card::Card, card_series::CardSeries, deck::Deck, game_mode::GameMode, package::Package,
+};
 
 use crate::{config::db::Db as DbConfig, services::share_code::encode_share_code_strings};
 
@@ -65,6 +67,7 @@ struct RecordDeck {
     id: Thing,
     name: String,
     cards: Vec<String>,
+    game_modes: Vec<GameMode>,
 }
 
 impl RecordDeck {
@@ -78,6 +81,7 @@ impl RecordDeck {
             name: self.name,
             cards,
             share_code,
+            game_modes: self.game_modes,
         }
     }
 }
@@ -152,9 +156,14 @@ impl SurrealDbRepository {
             DEFINE FIELD IF NOT EXISTS series ON TABLE card TYPE string;
             DEFINE FIELD IF NOT EXISTS share_code ON TABLE card TYPE string;
 
+            DEFINE TABLE IF NOT EXISTS game_mode SCHEMAFULL;
+            DEFINE FIELD IF NOT EXISTS name ON TABLE game_mode TYPE string;
+            DEFINE INDEX IF NOT EXISTS unique_name ON TABLE game_mode FIELDS name UNIQUE;
+
             DEFINE TABLE IF NOT EXISTS deck SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE deck TYPE string;
             DEFINE FIELD IF NOT EXISTS cards ON TABLE deck TYPE array<string, 12>;
+            DEFINE FIELD IF NOT EXISTS game_mode ON TABLE card TYPE array<record<game_mode>>;
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE deck FIELDS name UNIQUE;
 
             DEFINE TABLE IF NOT EXISTS package SCHEMAFULL;

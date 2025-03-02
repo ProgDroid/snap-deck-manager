@@ -5,7 +5,7 @@ use actix_web::{
 };
 use serde::{Deserialize, Serialize};
 
-use common::{card::Card, deck::Deck};
+use common::{card::Card, deck::Deck, game_mode::GameMode};
 
 use crate::{
     repository::surrealdb::SurrealDbRepository, services::share_code::encode_share_code_strings,
@@ -25,6 +25,7 @@ pub async fn get(
 struct PostData {
     name: String,
     cards: Vec<Card>,
+    game_modes: Vec<GameMode>,
 }
 
 #[derive(Serialize)]
@@ -42,6 +43,7 @@ pub async fn create(
             body.name.clone(),
             body.cards.clone(),
             share_code(&body),
+            body.game_modes.clone(),
         ))
         .await;
 
@@ -58,7 +60,12 @@ pub async fn update(
     db: Data<SurrealDbRepository>,
     body: Json<PostData>,
 ) -> Result<Json<PostResponse>> {
-    let mut deck = Deck::new(body.name.clone(), body.cards.clone(), share_code(&body));
+    let mut deck = Deck::new(
+        body.name.clone(),
+        body.cards.clone(),
+        share_code(&body),
+        body.game_modes.clone(),
+    );
     deck.id = Some(deck_id.clone());
 
     let id = db.update_deck(deck).await;
