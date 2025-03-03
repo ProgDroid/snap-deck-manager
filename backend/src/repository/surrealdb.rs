@@ -21,7 +21,7 @@ use crate::entities::third_party_card::ThirdPartyCard;
 
 // TODO could be split into different files which all have a DB connection
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct RecordCard {
     pub id: Thing,
     pub name: String,
@@ -66,15 +66,25 @@ impl RecordCard {
 struct RecordDeck {
     id: Thing,
     name: String,
-    cards: Vec<String>,
+    cards: Vec<RecordCard>,
     game_modes: Vec<RecordGameMode>,
 }
 
 impl RecordDeck {
-    fn into_deck(self, cards: Vec<Card>) -> Deck {
-        let codes: Vec<String> = cards.iter().map(|card| card.share_code.clone()).collect();
+    fn into_deck(self) -> Deck {
+        let codes: Vec<String> = self
+            .cards
+            .iter()
+            .map(|card| card.share_code.clone())
+            .collect();
 
         let share_code = encode_share_code_strings(&codes);
+
+        let cards: Vec<Card> = self
+            .cards
+            .iter()
+            .map(|card| card.clone().into_card()) // TODO fix
+            .collect();
 
         let game_modes: Vec<GameMode> = self
             .game_modes
@@ -96,11 +106,17 @@ impl RecordDeck {
 struct RecordPackage {
     id: Thing,
     name: String,
-    cards: Vec<String>,
+    cards: Vec<RecordCard>,
 }
 
 impl RecordPackage {
-    fn into_package(self, cards: Vec<Card>) -> Package {
+    fn into_package(self) -> Package {
+        let cards = self
+            .cards
+            .iter()
+            .map(|card| card.clone().into_card()) // TODO fix
+            .collect();
+
         Package {
             id: Some((self.id.to_string()[8..]).to_owned()),
             name: self.name,
@@ -190,13 +206,13 @@ impl SurrealDbRepository {
 
             DEFINE TABLE IF NOT EXISTS deck SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE deck TYPE string;
-            DEFINE FIELD IF NOT EXISTS cards ON TABLE deck TYPE array<string, 12>;
+            DEFINE FIELD IF NOT EXISTS cards ON TABLE deck TYPE array<record<card>, 12> DEFAULT ALWAYS [];
             DEFINE FIELD IF NOT EXISTS game_modes ON TABLE deck TYPE array<record<game_mode>> DEFAULT ALWAYS [];
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE deck FIELDS name UNIQUE;
 
             DEFINE TABLE IF NOT EXISTS package SCHEMAFULL;
             DEFINE FIELD IF NOT EXISTS name ON TABLE package TYPE string;
-            DEFINE FIELD IF NOT EXISTS cards ON TABLE package TYPE array<string, 12>;
+            DEFINE FIELD IF NOT EXISTS cards ON TABLE package TYPE array<record<card>, 12> DEFAULT ALWAYS [];
             DEFINE INDEX IF NOT EXISTS unique_name ON TABLE package FIELDS name UNIQUE;
             ",
         )
@@ -336,7 +352,7 @@ impl SurrealDbRepository {
 
         let sql = "
             SELECT * FROM type::thing(deck, $deck_id)
-            FETCH game_modes
+            FETCH cards, game_modes
         ";
 
         let record: Option<RecordDeck> = self
@@ -348,15 +364,7 @@ impl SurrealDbRepository {
             .take(0)
             .unwrap(); // TODO fix
 
-        // TODO there must be a better way, way too much processing
-        match record {
-            Some(val) => {
-                let cards = self.get_cards(val.cards.clone()).await;
-
-                Some(RecordDeck::into_deck(val, cards))
-            }
-            None => None,
-        }
+        record.map(RecordDeck::into_deck)
     }
 
     pub async fn get_all_decks(&self) -> Vec<Deck> {
@@ -364,23 +372,14 @@ impl SurrealDbRepository {
 
         let sql = "
             SELECT * FROM deck
-            FETCH game_modes
+            FETCH cards, game_modes
         ";
 
         let result = self.db.query(sql).await;
 
         let records: Vec<RecordDeck> = result.unwrap().take(0).unwrap(); // TODO fix
 
-        // TODO there must be a better way, way too much processing
-        let mut decks = Vec::default();
-
-        for record in records {
-            let cards = self.get_cards(record.cards.clone()).await;
-
-            decks.push(RecordDeck::into_deck(record, cards));
-        }
-
-        decks
+        records.into_iter().map(RecordDeck::into_deck).collect()
     }
 
     pub async fn update_deck(&self, deck: Deck) -> Result<()> {
@@ -419,49 +418,39 @@ impl SurrealDbRepository {
     pub async fn get_package(&self, package_id: String) -> Option<Package> {
         log(&Operation::GetPackage(package_id.clone()));
 
-        let record: Result<Option<RecordPackage>, _> =
-            self.db.select(("package", package_id.as_str())).await;
+        let sql = "
+            SELECT * FROM type::thing(package, $package_id)
+            FETCH cards
+        ";
 
-        // TODO there must be a better way, way too much processing
-        match record {
-            Ok(val) => match val {
-                Some(inner) => {
-                    let cards = self.get_cards(inner.cards.clone()).await;
+        let record: Option<RecordPackage> = self
+            .db
+            .query(sql)
+            .bind(("package_id", package_id))
+            .await
+            .unwrap()
+            .take(0)
+            .unwrap(); // TODO fix
 
-                    Some(RecordPackage::into_package(inner, cards))
-                }
-                None => None,
-            },
-            Err(_e) => {
-                // TODO log e
-                None
-            }
-        }
+        record.map(RecordPackage::into_package)
     }
 
     pub async fn get_all_packages(&self) -> Vec<Package> {
         log(&Operation::GetPackages);
 
-        let records: Result<Vec<RecordPackage>, _> = self.db.select("package").await;
+        let sql = "
+            SELECT * FROM package
+            FETCH cards
+        ";
 
-        // TODO there must be a better way, way too much processing
-        match records {
-            Ok(val) => {
-                let mut packages = Vec::default();
+        let result = self.db.query(sql).await;
 
-                for record in val {
-                    let cards = self.get_cards(record.cards.clone()).await;
+        let records: Vec<RecordPackage> = result.unwrap().take(0).unwrap(); // TODO fix
 
-                    packages.push(RecordPackage::into_package(record, cards));
-                }
-
-                packages
-            }
-            Err(_e) => {
-                // TODO log e
-                Vec::default()
-            }
-        }
+        records
+            .into_iter()
+            .map(RecordPackage::into_package)
+            .collect()
     }
 
     pub async fn update_package(&self, package: Package) -> Result<()> {
