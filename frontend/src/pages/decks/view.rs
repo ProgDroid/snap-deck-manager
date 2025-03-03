@@ -50,22 +50,18 @@ pub fn deck_view(props: &Props) -> Html {
 
         let on_click: Callback<DefaultValue> = Callback::default();
 
+        // TODO fix formatting
+
         return html! {
             <>
-                <table>
-                    <tr>
-                        <td>{"Deck Name"}</td>
-                        <td>{deck.name.clone()}</td>
-                    </tr>
-                    <tr>
-                        <td>{"Deck Share Code"}</td>
-                        <td>{share_code}</td>
-                    </tr>
-                </table>
-                <button {onclick}>{"Edit"}</button>
+                <h1>{deck.name.clone()}</h1>
+                <h2>{"Share Code"}</h2>
+                <p>{share_code}</p>
+                <h2>{"Cards"}</h2>
                 <div class="selected-cards-container">
                     <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
                 </div>
+                <h2>{"Game Modes"}</h2>
                 <div>
                 {
                     deck.game_modes.iter().map(|game_mode| {
@@ -75,11 +71,13 @@ pub fn deck_view(props: &Props) -> Html {
                     }).collect::<Html>()
                 }
                 </div>
+                <br />
+                <div>
+                    <button {onclick}>{"Edit"}</button>
+                </div>
             </>
         };
     }
-
-    // TODO fix game modes not saving
 
     return html! { <div>{"Loading..."}</div> };
 }
