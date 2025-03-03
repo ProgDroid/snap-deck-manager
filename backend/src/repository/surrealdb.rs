@@ -67,7 +67,7 @@ struct RecordDeck {
     id: Thing,
     name: String,
     cards: Vec<String>,
-    game_modes: Vec<GameMode>,
+    game_modes: Vec<RecordGameMode>,
 }
 
 impl RecordDeck {
@@ -76,12 +76,18 @@ impl RecordDeck {
 
         let share_code = encode_share_code_strings(&codes);
 
+        let game_modes: Vec<GameMode> = self
+            .game_modes
+            .iter()
+            .map(|game_mode| game_mode.clone().into_game_mode()) // TODO fix
+            .collect();
+
         Deck {
             id: Some((self.id.to_string()[5..]).to_owned()),
             name: self.name,
             cards,
             share_code,
-            game_modes: self.game_modes,
+            game_modes,
         }
     }
 }
@@ -103,7 +109,7 @@ impl RecordPackage {
     }
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct RecordGameMode {
     pub id: Thing,
     pub name: String,
@@ -328,23 +334,28 @@ impl SurrealDbRepository {
     pub async fn get_deck(&self, deck_id: String) -> Option<Deck> {
         log(&Operation::GetDeck(deck_id.clone()));
 
-        let record: Result<Option<RecordDeck>, _> =
-            self.db.select(("deck", deck_id.as_str())).await;
+        let sql = "
+            SELECT * FROM type::thing(deck, $deck_id)
+            FETCH game_modes
+        ";
+
+        let record: Option<RecordDeck> = self
+            .db
+            .query(sql)
+            .bind(("deck_id", deck_id))
+            .await
+            .unwrap()
+            .take(0)
+            .unwrap(); // TODO fix
 
         // TODO there must be a better way, way too much processing
         match record {
-            Ok(val) => match val {
-                Some(inner) => {
-                    let cards = self.get_cards(inner.cards.clone()).await;
+            Some(val) => {
+                let cards = self.get_cards(val.cards.clone()).await;
 
-                    Some(RecordDeck::into_deck(inner, cards))
-                }
-                None => None,
-            },
-            Err(_e) => {
-                // TODO log e
-                None
+                Some(RecordDeck::into_deck(val, cards))
             }
+            None => None,
         }
     }
 
