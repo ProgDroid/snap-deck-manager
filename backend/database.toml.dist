@@ -1,0 +1,6 @@
+host = "host"
+port = "1234"
+user = "user"
+pass = "pass"
+namespace = "Name Space"
+database = "database"

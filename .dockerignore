@@ -4,3 +4,4 @@ tests/
 Dockerfile
 api.toml
 database.toml
+*.toml.dist
