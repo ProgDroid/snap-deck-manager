@@ -22,6 +22,11 @@ use crate::entities::third_party_card::ThirdPartyCard;
 // TODO could be split into different files which all have a DB connection
 
 #[derive(Deserialize, Debug, Clone)]
+struct RecordCreated {
+    pub id: Thing,
+}
+
+#[derive(Deserialize, Debug, Clone)]
 struct RecordCard {
     pub id: Thing,
     pub name: String,
@@ -62,7 +67,7 @@ impl RecordCard {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 struct RecordDeck {
     id: Thing,
     name: String,
@@ -335,10 +340,10 @@ impl SurrealDbRepository {
 
         let deck_to_save = crate::entities::deck::Deck::from_model(&deck);
 
-        let records: Result<Option<RecordDeck>, _> =
+        let record: Result<Option<RecordCreated>, _> =
             self.db.create("deck").content(deck_to_save).await;
 
-        match records {
+        match record {
             Ok(inner) => inner.map(|record| record.id),
             Err(e) => {
                 error!("{e}");
@@ -403,7 +408,7 @@ impl SurrealDbRepository {
 
         let package_to_save = crate::entities::package::Package::from_model(&package);
 
-        let records: Result<Option<RecordPackage>, _> =
+        let records: Result<Option<RecordCreated>, _> =
             self.db.create("package").content(package_to_save).await;
 
         match records {
