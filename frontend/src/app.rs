@@ -18,8 +18,7 @@ fn switch(route: Route) -> Html {
         <>
             <Header />
             <main>
-            <div id="modal-container">
-            </div>
+            <div id="modal-container"></div>
             {
                 match route {
                     Route::HomePage => html! {

@@ -12,18 +12,24 @@ pub fn modal(props: &Props) -> Html {
         .get_element_by_id("modal-container")
         .unwrap_or_else(|| panic!("Expected to find a #modal-container element"));
 
-    // TODO
-    // modal_host.set_class_name(value);
+    modal_host.set_class_name("");
 
-    html! {
-        <div class="modal-content">
-        {
-            if props.visible {
-                create_portal(props.children.clone(), modal_host)
-            } else {
-                create_portal(html! { "" }, modal_host)
+    create_portal(
+        if props.visible {
+            modal_host.set_class_name("visible");
+
+            html! {
+                <div class="modal-content">
+                {
+                    props.children.clone()
+                }
+                </div>
             }
-        }
-        </div>
-    }
+        } else {
+            modal_host.set_class_name("");
+
+            html! { "" }
+        },
+        modal_host,
+    )
 }
