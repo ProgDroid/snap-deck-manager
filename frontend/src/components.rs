@@ -22,6 +22,7 @@ pub mod header;
 pub mod icon_link;
 pub mod label;
 pub mod logo;
+pub mod modal;
 pub mod nav_link;
 pub mod pill;
 pub mod share_code_input;
