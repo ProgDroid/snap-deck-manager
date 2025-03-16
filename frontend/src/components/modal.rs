@@ -12,8 +12,6 @@ pub fn modal(props: &Props) -> Html {
         .get_element_by_id("modal-container")
         .unwrap_or_else(|| panic!("Expected to find a #modal-container element"));
 
-    modal_host.set_class_name("");
-
     create_portal(
         if props.visible {
             modal_host.set_class_name("visible");
