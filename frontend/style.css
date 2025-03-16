@@ -1,4 +1,4 @@
-html {
+/* html {
     height: 100vh;
 }
 
@@ -190,8 +190,9 @@ header {
     align-items: center;
 }
 
+
 .clickable {
-    height: 100%; /* ? */
+    height: 100%; ?
 }
 
 .click-enabled:hover {
@@ -221,7 +222,7 @@ footer {
 }
 
 .scroll-box-container {
-    height: 100%; /* TODO fix */
+    height: 100%; TODO fix
 }
 
 .scroll-box {
@@ -304,4 +305,4 @@ button.selected {
 #modal-container.visible {
     backdrop-filter: blur(10px);
     z-index: 99999;
-}
+} */

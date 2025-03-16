@@ -8,7 +8,7 @@ pub struct Props {
 
 #[function_component(VerticalCentreContainer)]
 pub fn vertical_centre_container(props: &Props) -> Html {
-    let inner_class = format!("vertical-centre-inner {}", props.inner_class);
+    let inner_class = format!("vertical-centre-inner carousel {}", props.inner_class);
 
     html! {
         <div class="vertical-centre-container">

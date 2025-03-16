@@ -39,7 +39,7 @@ pub struct Props {
 
 #[function_component(IconLink)]
 pub fn icon_link(props: &Props) -> Html {
-    let class = format!("icon-link {}", props.icon_type.class());
+    let class = format!("icon-link carousel-item {}", props.icon_type.class());
 
     return html! {
         <>
