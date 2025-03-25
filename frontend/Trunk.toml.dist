@@ -2,4 +2,4 @@
 backend = "http://0.0.0.0:80/api"
 
 [tools]
-tailwindcss = "2.0.4"
+tailwindcss = "2.0.8"

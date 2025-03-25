@@ -44,13 +44,20 @@ pub fn home_page() -> Html {
         //         <Button<Submit> on_click={dismiss_modal} value={Submit::Submit} selected={false} />
         //     </div>
         // </Modal>
-        <VerticalCentreContainer inner_class="icon-container">
+        <div class="join join-vertical lg:join-horizontal">
             <IconLink icon_type={Type::Star} label={"Decks"} route={Route::Decks} />
             <IconLink icon_type={Type::Deck} label={"New Deck"} route={Route::DeckCreate} />
             <IconLink icon_type={Type::Package} label={"Packages"} route={Route::Packages} />
             <IconLink icon_type={Type::Package} label={"New Package"} route={Route::PackageCreate} />
             <IconLink icon_type={Type::Cog} label={"Update Cards"} route={Route::UpdateCards} />
-        </VerticalCentreContainer>
+        </div>
+        // <VerticalCentreContainer inner_class="icon-container">
+        //     <IconLink icon_type={Type::Star} label={"Decks"} route={Route::Decks} />
+        //     <IconLink icon_type={Type::Deck} label={"New Deck"} route={Route::DeckCreate} />
+        //     <IconLink icon_type={Type::Package} label={"Packages"} route={Route::Packages} />
+        //     <IconLink icon_type={Type::Package} label={"New Package"} route={Route::PackageCreate} />
+        //     <IconLink icon_type={Type::Cog} label={"Update Cards"} route={Route::UpdateCards} />
+        // </VerticalCentreContainer>
         </>
     };
 }
