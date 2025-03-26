@@ -243,7 +243,7 @@ where
         <>
             {
                 props.given_object.as_ref().map_or_else(|| html! {
-                    <ShareCodeInput submit_cards={select_cards.clone()} />
+                    <ShareCodeInput submit_cards={select_cards.clone()} /> // TODO disable if empty
                 }, |_| html!{})
             }
             <Form legend={T::into_label()}>
@@ -294,6 +294,7 @@ where
                 </FormField>
             </Form>
 
+            // TODO disable if contents empty
             <Button<Submit>
                 on_click={submit}
                 value={Submit::Submit}
