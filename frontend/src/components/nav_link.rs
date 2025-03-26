@@ -16,17 +16,13 @@ pub fn nav_link(props: &Props) -> Html {
 
     let class = format!(
         "btn btn-ghost text-xl normal-case nav-link{}",
-        if selected {
-            " btn-active btn-disabled"
-        } else {
-            ""
-        }
+        if selected { " btn-active" } else { "" }
     );
 
     return html! {
         <>
             <WithRoute route={props.route.clone()}>
-                <button class={class}>{props.label.clone()}</button>
+                <button disabled={selected} class={class}>{props.label.clone()}</button>
             </WithRoute>
         </>
     };

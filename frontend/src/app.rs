@@ -20,7 +20,7 @@ fn switch(route: Route) -> Html {
                 <Header />
                 <main class="flex flex-1">
                     <div id="modal-container"></div>
-                    <div class="grow">
+                    <div class="grow container mx-auto">
                     {
                         match route {
                             Route::HomePage => html! {

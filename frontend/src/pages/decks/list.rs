@@ -23,22 +23,27 @@ pub fn decks() -> Html {
         });
     }
 
+    // TODO refactor into more generic components
     return html! {
         <>
-            <div class="decks-container">
+            <div class="content-center h-full">
+                <div class="flex flex-row justify-center items-center flex-wrap gap-4">
                 {
                     (*decks).iter().map(|deck| {
                         html! {
                             <>
-                                <WithRoute route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
-                                    <h2>{deck.name.clone()}</h2>
-                                    <p>{format!("{} cards", deck.cards.len())}</p>
-                                    <CardPreview cards={deck.cards.clone()} />
-                                </WithRoute>
+                                <div class="btn w-72 lg:max-w-72 max-w-[80vw] h-full">
+                                    <WithRoute route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
+                                        <h2 class="text-lg font-semibold">{deck.name.clone()}</h2>
+                                        <p>{format!("{} cards", deck.cards.len())}</p>
+                                        <CardPreview cards={deck.cards.clone()} />
+                                    </WithRoute>
+                                </div>
                             </>
                         }
                     }).collect::<Html>()
                 }
+                </div>
             </div>
         </>
     };
