@@ -1,8 +1,6 @@
 use strum::IntoEnumIterator;
 
-use crate::components::{
-    button::Button as FilterButton, filters::clear::Clear, label::Label, IntoClass,
-};
+use crate::components::{button::Button as FilterButton, filters::clear::Clear, label::Label};
 
 use yew::prelude::*;
 
@@ -21,14 +19,17 @@ where
 #[function_component(FilterButtonsMultiSelect)]
 pub fn filter_buttons_multi_select<T>(props: &Props<T>) -> Html
 where
-    T: PartialEq + Clone + IntoEnumIterator + IntoClass + ToString + 'static,
+    T: PartialEq + Clone + IntoEnumIterator + ToString + 'static,
 {
-    let class = format!("filters-{}", T::into_class());
-
     html! {
-        <div class={class}>
+        <div class={""}>
             <Label for_prop={""} text={props.label.clone()} />
-            <FilterButton<Clear> selected=false on_click={props.clear.clone()} value={Clear::Clear} />
+            <FilterButton<Clear>
+                selected=false
+                on_click={props.clear.clone()}
+                value={Clear::Clear}
+                class={"ghost"}
+            />
             {
                 T::iter().map(|value| {
                     let selected = props.selected.contains(&value);
@@ -40,7 +41,12 @@ where
                     };
 
                     html! {
-                        <FilterButton<T> selected={selected} on_click={on_click} value={value} />
+                        <FilterButton<T>
+                            selected={selected}
+                            on_click={on_click}
+                            value={value}
+                            class={"ghost"}
+                        />
                     }
                 }).collect::<Html>()
             }

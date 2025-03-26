@@ -2,8 +2,6 @@ use std::fmt::Display;
 
 use strum::EnumIter;
 
-use crate::components::IntoClass;
-
 #[derive(Eq, PartialEq, Clone, EnumIter, Hash)]
 pub enum Cost {
     Zero,
@@ -34,12 +32,6 @@ impl Display for Cost {
                 Self::Eight => "8",
             }
         )
-    }
-}
-
-impl IntoClass for Cost {
-    fn into_class() -> String {
-        "cost".to_owned()
     }
 }
 

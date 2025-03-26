@@ -1,6 +1,6 @@
 use strum::IntoEnumIterator;
 
-use crate::components::{button::Button as FilterButton, label::Label, IntoClass};
+use crate::components::{button::Button as FilterButton, label::Label};
 
 use yew::prelude::*;
 
@@ -17,17 +17,20 @@ where
 #[function_component(FilterButtons)]
 pub fn filter_buttons<T>(props: &Props<T>) -> Html
 where
-    T: PartialEq + Clone + IntoEnumIterator + IntoClass + ToString + 'static,
+    T: PartialEq + Clone + IntoEnumIterator + ToString + 'static,
 {
-    let class = format!("filters-{}", T::into_class());
-
     html! {
-        <div class={class}>
+        <div class={""}>
             <Label for_prop={""} text={props.label.clone()} />
             {
                 T::iter().map(|value| {
                     html! {
-                        <FilterButton<T> selected={value == props.selected} on_click={props.select.clone()} value={value} />
+                        <FilterButton<T>
+                            selected={value == props.selected}
+                            on_click={props.select.clone()}
+                            value={value}
+                            class={"ghost"}
+                        />
                     }
                 }).collect::<Html>()
             }

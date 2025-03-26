@@ -16,48 +16,52 @@ use yew_router::prelude::*;
 fn switch(route: Route) -> Html {
     html! {
         <>
-            <Header />
-            <main>
-            <div id="modal-container"></div>
-            {
-                match route {
-                    Route::HomePage => html! {
-                        <HomePage />
-                    },
-                    Route::DeckView { deck_id } => html! {
-                        <DeckView deck_id={deck_id} />
-                    },
-                    Route::DeckCreate => html! {
-                        <DeckCreate />
-                    },
-                    Route::CardsView => html! {
-                        <CardsView />
-                    },
-                    Route::Decks => html! {
-                        <Decks />
-                    },
-                    Route::DeckEdit { deck_id } => html! {
-                        <DeckEdit deck_id={deck_id} />
-                    },
-                    Route::Packages => html! {
-                        <Packages />
-                    },
-                    Route::PackageView { package_id } => html! {
-                        <PackageView package_id={package_id} />
-                    },
-                    Route::PackageEdit { package_id } => html! {
-                        <PackageEdit package_id={package_id} />
-                    },
-                    Route::PackageCreate => html! {
-                        <PackageCreate />
-                    },
-                    Route::UpdateCards => html! {
-                        <UpdateCards />
+            <div class="flex flex-col min-h-screen">
+                <Header />
+                <main class="flex flex-1">
+                    <div id="modal-container"></div>
+                    <div class="grow container mx-auto">
+                    {
+                        match route {
+                            Route::HomePage => html! {
+                                <HomePage />
+                            },
+                            Route::DeckView { deck_id } => html! {
+                                <DeckView deck_id={deck_id} />
+                            },
+                            Route::DeckCreate => html! {
+                                <DeckCreate />
+                            },
+                            Route::CardsView => html! {
+                                <CardsView />
+                            },
+                            Route::Decks => html! {
+                                <Decks />
+                            },
+                            Route::DeckEdit { deck_id } => html! {
+                                <DeckEdit deck_id={deck_id} />
+                            },
+                            Route::Packages => html! {
+                                <Packages />
+                            },
+                            Route::PackageView { package_id } => html! {
+                                <PackageView package_id={package_id} />
+                            },
+                            Route::PackageEdit { package_id } => html! {
+                                <PackageEdit package_id={package_id} />
+                            },
+                            Route::PackageCreate => html! {
+                                <PackageCreate />
+                            },
+                            Route::UpdateCards => html! {
+                                <UpdateCards />
+                            }
+                        }
                     }
-                }
-            }
-            </main>
-            <Footer />
+                    </div>
+                </main>
+                <Footer />
+            </div>
         </>
     }
 }

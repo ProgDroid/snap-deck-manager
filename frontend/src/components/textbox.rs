@@ -10,7 +10,9 @@ pub struct Props {
 
 #[function_component(Textbox)]
 pub fn textbox(props: &Props) -> Html {
+    // TODO add placeholder
+
     html! {
-        <input type="text" id={props.id.clone()} value={props.value.clone()} name={props.name.clone()} oninput={props.on_input.clone()}/>
+        <input class="input" type="text" id={props.id.clone()} value={props.value.clone()} name={props.name.clone()} oninput={props.on_input.clone()}/>
     }
 }

@@ -12,16 +12,16 @@ pub enum Class {
     Info,
     Error,
     Success,
-    Secondary,
+    Ghost,
 }
 
 impl Class {
     pub fn to_class_string(&self) -> String {
         String::from(match self {
-            Self::Info => "info",
-            Self::Error => "error",
-            Self::Success => "success",
-            Self::Secondary => "secondary",
+            Self::Info => "badge-info",
+            Self::Error => "badge-error",
+            Self::Success => "badge-success",
+            Self::Ghost => "badge-ghost",
         })
     }
 }
@@ -35,6 +35,8 @@ where
     pub value: T,
     pub content: AttrValue,
     pub on_click: Callback<T>,
+    #[prop_or_default]
+    pub hover_interaction: bool,
 }
 
 #[function_component(Pill)]
@@ -42,7 +44,15 @@ pub fn pill<T>(props: &Props<T>) -> Html
 where
     T: PartialEq + Clone + ToString + 'static,
 {
-    let class = format!("pill {}", props.class.to_class_string());
+    let class = format!(
+        "font-semibold transition delay-50 duration-150 badge {}{}",
+        props.class.to_class_string(),
+        if props.hover_interaction {
+            " select-none hover:cursor-pointer hover:scale-105"
+        } else {
+            ""
+        }
+    );
 
     html! {
         <div onclick={

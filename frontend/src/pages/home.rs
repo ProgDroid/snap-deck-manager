@@ -4,7 +4,6 @@ use crate::{
         icon_link::{IconLink, Type},
         modal::Modal,
         submit::Submit,
-        vertical_centre_container::VerticalCentreContainer,
     },
     route::Route,
 };
@@ -44,13 +43,13 @@ pub fn home_page() -> Html {
         //         <Button<Submit> on_click={dismiss_modal} value={Submit::Submit} selected={false} />
         //     </div>
         // </Modal>
-        <VerticalCentreContainer inner_class="icon-container">
-            <IconLink icon_type={Type::Star} label={"Decks"} route={Route::Decks} />
-            <IconLink icon_type={Type::Deck} label={"New Deck"} route={Route::DeckCreate} />
-            <IconLink icon_type={Type::Package} label={"Packages"} route={Route::Packages} />
-            <IconLink icon_type={Type::Package} label={"New Package"} route={Route::PackageCreate} />
-            <IconLink icon_type={Type::Cog} label={"Update Cards"} route={Route::UpdateCards} />
-        </VerticalCentreContainer>
+        <div class="content-center h-full">
+            <div class="flex flex-row justify-center items-center flex-wrap gap-4">
+                <IconLink icon_type={Type::Deck} label={"New Deck"} route={Route::DeckCreate} />
+                <IconLink icon_type={Type::Package} label={"New Package"} route={Route::PackageCreate} />
+                <IconLink icon_type={Type::Cog} label={"Update Cards"} route={Route::UpdateCards} />
+            </div>
+        </div>
         </>
     };
 }

@@ -19,12 +19,14 @@ use common::{card::Card, game_mode::GameMode};
 use yew::prelude::*;
 use yew_router::prelude::Redirect;
 
-use super::{CardCollection, IntoClass, IntoLabel, ToRoute};
+use super::{CardCollection, IntoLabel, ToRoute};
+
+// TODO skeleton, might be hard as it is now
 
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Props<T>
 where
-    T: CardCollection + PartialEq + Eq + Clone + IntoClass + ToRoute + IntoLabel,
+    T: CardCollection + PartialEq + Eq + Clone + ToRoute + IntoLabel,
 {
     pub given_object: Option<T>,
 }
@@ -32,7 +34,7 @@ where
 #[function_component(EditForm)]
 pub fn edit_form<T>(props: &Props<T>) -> Html
 where
-    T: CardCollection + PartialEq + Eq + Clone + IntoClass + ToRoute + IntoLabel,
+    T: CardCollection + PartialEq + Eq + Clone + ToRoute + IntoLabel,
 {
     let input_value = use_state(|| {
         props
@@ -235,36 +237,41 @@ where
         return html! { <Redirect<Route> to={T::into_route(id)} /> };
     }
 
-    let class_prefix = T::into_class();
     let label = format!("{} Name", T::into_label());
 
     return html! {
         <>
             {
                 props.given_object.as_ref().map_or_else(|| html! {
-                    <ShareCodeInput submit_cards={select_cards.clone()} />
+                    <ShareCodeInput submit_cards={select_cards.clone()} /> // TODO disable if empty
                 }, |_| html!{})
             }
-            <Form class_prefix={class_prefix.clone()}>
-                <FormField id={format!("{}-name-create", class_prefix)} class={""} label={label}>
-                    <Textbox id={format!("{}-name", class_prefix)} value={(*input_value).clone()} name="card-filter" on_input={on_input} />
+            <Form legend={T::into_label()}>
+                <FormField id={"name-create"} class={""} label={label}>
+                    <Textbox id={"name"} value={(*input_value).clone()} name="card-filter" on_input={on_input} />
                 </FormField>
 
                 {
                     if T::display_game_modes() {
                         html! {
                             <FormField id={"game-modes-container"} class={"game-modes-container"} label={"Game Modes"}>
-                                <div class={"game-modes-pill-container"}>
+                                <div class={"flex gap-4"}>
                                 {
                                     (*all_game_modes).iter().map(|game_mode| {
                                         let (game_mode_on_click, class) = if (*selected_game_modes).contains_key(&game_mode.id) {
                                             (deselect_game_mode.clone(), Class::Success)
                                         } else {
-                                            (select_game_mode.clone(), Class::Secondary)
+                                            (select_game_mode.clone(), Class::Ghost)
                                         };
 
                                         html! {
-                                            <Pill<GameMode> class={class} content={game_mode.name.clone()} on_click={game_mode_on_click} value={game_mode.clone()} />
+                                            <Pill<GameMode>
+                                                class={class}
+                                                content={game_mode.name.clone()}
+                                                on_click={game_mode_on_click}
+                                                value={game_mode.clone()}
+                                                hover_interaction={true}
+                                            />
                                         }
                                     }).collect::<Html>()
                                 }
@@ -277,21 +284,35 @@ where
                 }
 
                 <FormField id={"selected-cards-container"} class={"selected-cards-container"} label={"Selected Cards"}>
-                    <CardGrid cards={sorted_selected_cards.clone()} excluded_cards={Vec::default()} display={Display::Simple} on_click={deselect_cards} />
+                    <CardGrid
+                        cards={sorted_selected_cards.clone()}
+                        excluded_cards={Vec::default()}
+                        display={Display::Simple}
+                        on_click={deselect_cards}
+                        hover_interaction={true}
+                    />
                 </FormField>
             </Form>
 
-            <Button<Submit> on_click={submit} value={Submit::Submit} selected=false />
+            // TODO disable if contents empty
+            <Button<Submit>
+                on_click={submit}
+                value={Submit::Submit}
+                selected=false
+                class={"primary"}
+            />
+
+            <div class="divider"></div>
 
             {
                 if T::display_packages() {
                     html! {
                         <>
-                            <h2>{"Packages"}</h2>
+                            <FormField id={"packages"} class={"packages-container"} label={"Packages"}>
                             {
                                 (*all_packages).iter().map(|package| {
                                     html! {
-                                        <h3 onclick={
+                                        <h3 class="text-lg font-semibold cursor-pointer" onclick={
                                             let select_cards = select_cards.clone();
 
                                             let package = package.clone();
@@ -309,6 +330,9 @@ where
                                     }
                                 }).collect::<Html>()
                             }
+                            </FormField>
+
+                            <div class="divider"></div>
                         </>
                     }
                 } else {
@@ -316,9 +340,9 @@ where
                 }
             }
 
-            <h2>{"Card List"}</h2>
-
-        <CardPicker excluded_cards={sorted_selected_cards.clone()} on_click={select_cards} />
+            <FormField id={"card-list"} class={"card-list-container"} label={"Card List"}>
+                <CardPicker excluded_cards={sorted_selected_cards.clone()} on_click={select_cards} />
+            </FormField>
         </>
     };
 }

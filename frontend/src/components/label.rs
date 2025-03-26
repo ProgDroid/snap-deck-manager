@@ -9,6 +9,6 @@ pub struct Props {
 #[function_component(Label)]
 pub fn label(props: &Props) -> Html {
     html! {
-        <label for={props.for_prop.clone()}>{format!("{}:", props.text.clone())}</label>
+        <label class="fieldset-label" for={props.for_prop.clone()}>{format!("{}:", props.text.clone())}</label>
     }
 }
