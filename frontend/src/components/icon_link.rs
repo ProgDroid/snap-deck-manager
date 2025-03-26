@@ -52,7 +52,7 @@ pub fn icon_link(props: &Props) -> Html {
                         <img class="h-full w-full object-fill" src={props.icon_type.link()} />
                     </WithRoute>
                 </div>
-                <h2>{props.label.clone()}</h2>
+                <h2 class="text-lg font-semibold">{props.label.clone()}</h2>
             </div>
         </>
     };

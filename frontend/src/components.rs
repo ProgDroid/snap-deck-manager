@@ -27,7 +27,6 @@ pub mod pill;
 pub mod share_code_input;
 pub mod submit;
 pub mod textbox;
-pub mod vertical_centre_container;
 pub mod with_route;
 
 pub trait IntoClass {
