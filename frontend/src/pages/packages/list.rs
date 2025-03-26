@@ -1,6 +1,6 @@
 use crate::{
     api::packages::list as get_packages,
-    components::{card_preview::CardPreview, clickable::Clickable},
+    components::{card_preview::CardPreview, with_route::WithRoute},
     route::Route,
 };
 
@@ -31,11 +31,11 @@ pub fn packages() -> Html {
                     (*packages).iter().map(|package| {
                         html! {
                             <>
-                                <Clickable route={Route::PackageView { package_id: package.id.clone().unwrap() }}>
+                                <WithRoute route={Route::PackageView { package_id: package.id.clone().unwrap() }}>
                                     <h2>{package.name.clone()}</h2>
                                     <p>{format!("{} cards", package.cards.len())}</p>
                                     <CardPreview cards={package.cards.clone()} />
-                                </Clickable>
+                                </WithRoute>
                             </>
                         }
                     }).collect::<Html>()

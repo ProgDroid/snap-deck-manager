@@ -1,7 +1,7 @@
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-use crate::{components::clickable::Clickable, route::Route};
+use crate::{components::with_route::WithRoute, route::Route};
 
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Props {
@@ -25,9 +25,9 @@ pub fn nav_link(props: &Props) -> Html {
 
     return html! {
         <>
-            <Clickable route={props.route.clone()}>
+            <WithRoute route={props.route.clone()}>
                 <button class={class}>{props.label.clone()}</button>
-            </Clickable>
+            </WithRoute>
         </>
     };
 }

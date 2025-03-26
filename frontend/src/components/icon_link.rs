@@ -1,6 +1,6 @@
 use yew::prelude::*;
 
-use crate::{components::clickable::Clickable, route::Route};
+use crate::{components::with_route::WithRoute, route::Route};
 
 #[derive(Clone, PartialEq, Eq)]
 pub enum Type {
@@ -47,9 +47,11 @@ pub fn icon_link(props: &Props) -> Html {
     return html! {
         <>
             <div class={class}>
-                <Clickable route={props.route.clone()}>
-                    <img class="h-full w-full object-fill" src={props.icon_type.link()} />
-                </Clickable>
+                <div class="btn btn-ghost px-0 h-full w-full items-center">
+                    <WithRoute route={props.route.clone()}>
+                        <img class="h-full w-full object-fill" src={props.icon_type.link()} />
+                    </WithRoute>
+                </div>
                 <h2>{props.label.clone()}</h2>
             </div>
         </>

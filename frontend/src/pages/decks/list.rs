@@ -1,6 +1,6 @@
 use crate::{
     api::decks::list as get_decks,
-    components::{card_preview::CardPreview, clickable::Clickable},
+    components::{card_preview::CardPreview, with_route::WithRoute},
     route::Route,
 };
 
@@ -30,11 +30,11 @@ pub fn decks() -> Html {
                     (*decks).iter().map(|deck| {
                         html! {
                             <>
-                                <Clickable route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
+                                <WithRoute route={Route::DeckView { deck_id: deck.id.clone().unwrap() }}>
                                     <h2>{deck.name.clone()}</h2>
                                     <p>{format!("{} cards", deck.cards.len())}</p>
                                     <CardPreview cards={deck.cards.clone()} />
-                                </Clickable>
+                                </WithRoute>
                             </>
                         }
                     }).collect::<Html>()

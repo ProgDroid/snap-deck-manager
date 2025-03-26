@@ -9,17 +9,11 @@ pub struct Props {
     pub route: Route,
 }
 
-// TODO make this more obviously for routes
-#[function_component(Clickable)]
-pub fn clickable(props: &Props) -> Html {
+#[function_component(WithRoute)]
+pub fn with_route(props: &Props) -> Html {
     let navigator = use_navigator().unwrap(); // TODO fix
     let current_route: Route = use_route().unwrap();
     let selected = current_route == props.route;
-
-    let class = format!(
-        "clickable h-full w-full items-center {}",
-        if selected { "" } else { " click-enabled" }
-    );
 
     let onclick: Callback<MouseEvent> = if selected {
         Callback::default()
@@ -31,7 +25,7 @@ pub fn clickable(props: &Props) -> Html {
 
     return html! {
         <>
-            <div class={class} {onclick}>
+            <div class="h-full w-full" {onclick}>
                 {props.children.clone()}
             </div>
         </>

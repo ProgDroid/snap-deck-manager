@@ -13,7 +13,6 @@ pub mod card_list;
 pub mod card_picker;
 pub mod card_preview;
 pub mod cards;
-pub mod clickable;
 pub mod edit_form;
 pub mod filters;
 pub mod footer;
@@ -29,6 +28,7 @@ pub mod share_code_input;
 pub mod submit;
 pub mod textbox;
 pub mod vertical_centre_container;
+pub mod with_route;
 
 pub trait IntoClass {
     fn into_class() -> String;
