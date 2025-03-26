@@ -8,6 +8,8 @@ pub struct Props {
     pub excluded_cards: Vec<Card>,
     pub display: Display,
     pub on_click: Callback<Vec<Card>>,
+    #[prop_or_default]
+    pub hover_interaction: bool,
 }
 
 #[function_component(CardGrid)]
@@ -24,6 +26,7 @@ pub fn card_grid(props: &Props) -> Html {
                         display={props.display.clone()}
                         on_click={if excluded { Callback::from(|_| {}) } else { props.on_click.clone() }}
                         excluded={excluded}
+                        hover_interaction={props.hover_interaction}
                     />
                 }
             }).collect::<Html>()

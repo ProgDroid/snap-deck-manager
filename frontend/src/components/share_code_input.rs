@@ -48,11 +48,17 @@ pub fn share_code_input(props: &Props) -> Html {
             <Label for_prop={"share-code-input"} text={"Share Code"} />
             <Textbox id={"share-code-input"} value={(*input_value).clone()} name={"share-code-input"} on_input={on_input} />
 
-            <Button<Submit> disabled={disabled} on_click={
-                let submit_cards = props.submit_cards.clone();
+            <Button<Submit>
+                disabled={disabled}
+                on_click={
+                    let submit_cards = props.submit_cards.clone();
 
-                move |_| submit_cards.emit((*cards).clone())
-            } value={Submit::Submit} selected=false />
+                    move |_| submit_cards.emit((*cards).clone())
+                }
+                value={Submit::Submit}
+                selected=false
+                class={"primary"}
+            />
         </>
     }
 }

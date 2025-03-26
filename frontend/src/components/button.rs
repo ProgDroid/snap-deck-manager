@@ -10,6 +10,7 @@ where
     pub selected: bool,
     #[prop_or_default]
     pub disabled: bool,
+    pub class: AttrValue,
 }
 
 #[function_component(Button)]
@@ -17,7 +18,12 @@ pub fn button<T>(props: &Props<T>) -> Html
 where
     T: PartialEq + Clone + ToString + 'static,
 {
-    let class = if props.selected { "selected" } else { "" };
+    let class = format!(
+        "btn btn-{}{}{}",
+        props.class.clone(),
+        if props.selected { " btn-active" } else { "" },
+        if props.disabled { " btn-disabled" } else { "" }
+    );
 
     html! {
         <button disabled={props.disabled} class={class} onclick={

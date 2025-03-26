@@ -29,24 +29,6 @@ pub mod submit;
 pub mod textbox;
 pub mod with_route;
 
-pub trait IntoClass {
-    fn into_class() -> String;
-}
-
-impl IntoClass for Deck {
-    #[inline]
-    fn into_class() -> String {
-        "deck".to_owned()
-    }
-}
-
-impl IntoClass for Package {
-    #[inline]
-    fn into_class() -> String {
-        "package".to_owned()
-    }
-}
-
 pub trait IntoLabel {
     fn into_label() -> String;
 }

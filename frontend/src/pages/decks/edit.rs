@@ -10,6 +10,8 @@ pub struct Props {
 
 #[function_component(DeckEdit)]
 pub fn deck_edit(props: &Props) -> Html {
+    // TODO skeleton, might be hard as it is now
+
     let deck_id = props.deck_id.clone();
 
     let deck = use_state(|| None);

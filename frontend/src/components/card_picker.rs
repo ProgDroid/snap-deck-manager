@@ -180,7 +180,13 @@ pub fn card_picker(props: &Props) -> Html {
                     <div class="scroll-box">
                     {
                         html! {
-                            <CardGrid cards={filtered_cards.clone()} excluded_cards={props.excluded_cards.clone()} display={Display::Detailed} on_click={props.on_click.clone()}/>
+                            <CardGrid
+                                cards={filtered_cards.clone()}
+                                excluded_cards={props.excluded_cards.clone()}
+                                display={Display::Detailed}
+                                on_click={props.on_click.clone()}
+                                hover_interaction={true}
+                            />
                         }
                     }
                     </div>

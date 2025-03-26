@@ -15,11 +15,21 @@ pub struct Props {
     pub display: Display,
     pub on_click: Callback<Vec<Card>>,
     pub excluded: bool,
+    #[prop_or_default]
+    pub hover_interaction: bool,
 }
 
 #[function_component(GridElement)]
 pub fn grid_element(props: &Props) -> Html {
-    let class = if props.excluded { " grayscale" } else { "" };
+    let class = format!(
+        "transition delay-50 duration-300{}{}",
+        if props.excluded { " grayscale" } else { "" },
+        if props.hover_interaction {
+            " hover:scale-105 cursor-pointer"
+        } else {
+            ""
+        }
+    );
 
     let ability = Html::from_html_unchecked(props.card.description.clone().into());
 
@@ -34,7 +44,7 @@ pub fn grid_element(props: &Props) -> Html {
         }>
             <div key={props.card.id.clone()} class="join join-vertical items-center">
                 <img class="join-item" src={props.card.art()} />
-                <h3 class="join-item">{props.card.name.clone()}</h3>
+                <h3 class="join-item font-semibold">{props.card.name.clone()}</h3>
                 if props.display == Display::Detailed {
                     <p class="join-item">{ability}</p>
                     if !props.card.abilities.is_empty() {
