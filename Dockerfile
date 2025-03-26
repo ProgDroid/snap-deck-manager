@@ -6,6 +6,8 @@ RUN cargo install trunk wasm-bindgen-cli
 WORKDIR /usr/src/snap-deck-manager
 COPY . .
 
+ENV TRUNK_TOOLS_TAILWINDCSS="2.0.8"
+
 RUN cd frontend && trunk build --release
 RUN cargo build --release
 
