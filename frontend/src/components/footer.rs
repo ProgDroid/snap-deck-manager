@@ -5,7 +5,7 @@ pub fn footer() -> Html {
     html! {
         <footer class="footer footer-center bg-base-300 text-base-content p-4">
             <aside>
-                <p>{"Marvel Snap Deck Manager"}</p>
+                <p>{"Deck Manager"}</p>
             </aside>
         </footer>
     }
