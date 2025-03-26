@@ -16,7 +16,10 @@ pub fn clickable(props: &Props) -> Html {
     let current_route: Route = use_route().unwrap();
     let selected = current_route == props.route;
 
-    let class = format!("clickable{}", if selected { "" } else { " click-enabled" });
+    let class = format!(
+        "clickable h-full w-full items-center {}",
+        if selected { "" } else { " click-enabled" }
+    );
 
     let onclick: Callback<MouseEvent> = if selected {
         Callback::default()

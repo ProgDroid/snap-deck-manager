@@ -40,7 +40,7 @@ pub struct Props {
 #[function_component(IconLink)]
 pub fn icon_link(props: &Props) -> Html {
     let class = format!(
-        "icon-link join-item join join-vertical justify-center w-100 {}",
+        "icon-link join-item join join-vertical justify-center items-center w-100 lg:max-w-100 max-w-[80vw] {}",
         props.icon_type.class()
     );
 
@@ -48,7 +48,7 @@ pub fn icon_link(props: &Props) -> Html {
         <>
             <div class={class}>
                 <Clickable route={props.route.clone()}>
-                    <img src={props.icon_type.link()} />
+                    <img class="h-full w-full object-fill" src={props.icon_type.link()} />
                 </Clickable>
                 <h2>{props.label.clone()}</h2>
             </div>
