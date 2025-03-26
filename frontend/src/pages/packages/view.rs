@@ -1,11 +1,13 @@
 use crate::{
     api::packages::get as get_package,
-    components::cards::{grid::CardGrid, grid_element::Display},
+    components::{
+        cards::{grid::CardGrid, grid_element::Display},
+        with_route::WithRoute,
+    },
     route::Route,
 };
 use common::card::Card;
 use yew::prelude::*;
-use yew_router::hooks::use_navigator;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Props {
@@ -14,11 +16,14 @@ pub struct Props {
 
 #[function_component(PackageView)]
 pub fn package_view(props: &Props) -> Html {
+    let loading = use_state(|| true);
+
     let package_id = props.package_id.clone();
     let package = use_state(|| None);
     {
         let package = package.clone();
         let package_id = package_id.clone();
+        let loading = loading.clone();
 
         use_effect_with((), move |()| {
             let package = package.clone();
@@ -28,16 +33,14 @@ pub fn package_view(props: &Props) -> Html {
                 } else {
                     // TODO log e
                 }
+
+                loading.set(false);
             });
             || ()
         });
     }
 
-    let navigator = use_navigator().unwrap(); // TODO fix
-
     let route = Route::PackageEdit { package_id };
-
-    let onclick = Callback::from(move |_| navigator.push(&route));
 
     if let Some(package) = &*package {
         let mut cards = package.cards.clone();
@@ -45,16 +48,17 @@ pub fn package_view(props: &Props) -> Html {
 
         return html! {
             <>
-                <table>
-                    <tr>
-                        <td>{"Package Name"}</td>
-                        <td>{package.name.clone()}</td>
-                    </tr>
-                </table>
-                <button {onclick}>{"Edit"}</button>
-                <div class="selected-cards-container">
-                    <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
-                </div>
+                <h1 class="text-3xl font-bold" >{package.name.clone()}</h1>
+                // <h2 class="text-xl font-semibold">{"Share Code"}</h2> // TODO package share code?
+                // <p class="break-all text-wrap">{share_code}</p>
+                <h2 class="text-xl font-semibold">{"Cards"}</h2>
+                <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
+                <div class="divider"></div>
+                <WithRoute route={route}>
+                    <div class="btn btn-primary">
+                        <button>{"Edit"}</button>
+                    </div>
+                </WithRoute>
             </>
         };
     }
