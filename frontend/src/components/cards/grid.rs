@@ -13,7 +13,7 @@ pub struct Props {
 #[function_component(CardGrid)]
 pub fn card_grid(props: &Props) -> Html {
     html! {
-        <div class="card-grid">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
             {
                 props.cards.iter().map(|card| {
                     let excluded = props.excluded_cards.contains(card);

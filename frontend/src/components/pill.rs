@@ -18,10 +18,10 @@ pub enum Class {
 impl Class {
     pub fn to_class_string(&self) -> String {
         String::from(match self {
-            Self::Info => "info",
-            Self::Error => "error",
-            Self::Success => "success",
-            Self::Secondary => "secondary",
+            Self::Info => "badge-info",
+            Self::Error => "badge-error",
+            Self::Success => "badge-success",
+            Self::Secondary => "badge-secondary",
         })
     }
 }
@@ -42,7 +42,7 @@ pub fn pill<T>(props: &Props<T>) -> Html
 where
     T: PartialEq + Clone + ToString + 'static,
 {
-    let class = format!("pill {}", props.class.to_class_string());
+    let class = format!("badge {}", props.class.to_class_string());
 
     html! {
         <div onclick={

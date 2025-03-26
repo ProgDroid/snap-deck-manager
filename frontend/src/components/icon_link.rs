@@ -48,7 +48,7 @@ pub fn icon_link(props: &Props) -> Html {
         <>
             <div class={class}>
                 <div class="btn btn-ghost px-0 h-full w-full items-center">
-                    <WithRoute route={props.route.clone()}>
+                    <WithRoute class="h-full w-full" route={props.route.clone()}>
                         <img class="h-full w-full object-fill" src={props.icon_type.link()} />
                     </WithRoute>
                 </div>

@@ -3,6 +3,7 @@ use crate::{
     components::{
         cards::{grid::CardGrid, grid_element::Display},
         pill::{Class, DefaultValue, Pill},
+        with_route::WithRoute,
     },
     route::Route,
 };
@@ -40,8 +41,6 @@ pub fn deck_view(props: &Props) -> Html {
 
     let route = Route::DeckEdit { deck_id };
 
-    let onclick = Callback::from(move |_| navigator.push(&route));
-
     if let Some(deck) = &*deck {
         let share_code = deck.share_code.clone();
 
@@ -54,15 +53,13 @@ pub fn deck_view(props: &Props) -> Html {
 
         return html! {
             <>
-                <h1>{deck.name.clone()}</h1>
-                <h2>{"Share Code"}</h2>
-                <p>{share_code}</p>
-                <h2>{"Cards"}</h2>
-                <div class="selected-cards-container">
-                    <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
-                </div>
-                <h2>{"Game Modes"}</h2>
-                <div>
+                <h1 class="text-3xl font-bold" >{deck.name.clone()}</h1>
+                <h2 class="text-xl font-semibold">{"Share Code"}</h2>
+                <p class="break-all text-wrap">{share_code}</p>
+                <h2 class="text-xl font-semibold">{"Cards"}</h2>
+                <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
+                <h2 class="text-xl font-semibold">{"Game Modes"}</h2>
+                <div class="flex-row">
                 {
                     deck.game_modes.iter().map(|game_mode| {
                         html! {
@@ -71,10 +68,12 @@ pub fn deck_view(props: &Props) -> Html {
                     }).collect::<Html>()
                 }
                 </div>
-                <br />
-                <div>
-                    <button {onclick}>{"Edit"}</button>
-                </div>
+                <div class="divider"></div>
+                <WithRoute route={route}>
+                    <div class="btn btn-primary">
+                        <button>{"Edit"}</button>
+                    </div>
+                </WithRoute>
             </>
         };
     }

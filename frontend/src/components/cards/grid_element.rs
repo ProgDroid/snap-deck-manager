@@ -19,10 +19,7 @@ pub struct Props {
 
 #[function_component(GridElement)]
 pub fn grid_element(props: &Props) -> Html {
-    let class = format!(
-        "card-grid-container{}",
-        if props.excluded { " excluded" } else { "" }
-    );
+    let class = if props.excluded { " grayscale" } else { "" };
 
     let ability = Html::from_html_unchecked(props.card.description.clone().into());
 
@@ -35,13 +32,13 @@ pub fn grid_element(props: &Props) -> Html {
 
             move |_| on_click.emit(vec![card.clone()])
         }>
-            <div key={props.card.id.clone()} class="card-container">
-                <img src={props.card.art()} />
-                <h3>{props.card.name.clone()}</h3>
+            <div key={props.card.id.clone()} class="join join-vertical items-center">
+                <img class="join-item" src={props.card.art()} />
+                <h3 class="join-item">{props.card.name.clone()}</h3>
                 if props.display == Display::Detailed {
-                    <p>{ability}</p>
+                    <p class="join-item">{ability}</p>
                     if !props.card.abilities.is_empty() {
-                        <span class="card-abilities">{
+                        <span class="card-abilities join-item">{
                             props.card.abilities.clone().into_iter().map(|ability| html! { <Pill<DefaultValue> class={Class::Info} content={ability} on_click={on_click.clone()} value={DefaultValue::default()} /> }).collect::<Vec<Html>>()
                         }</span>
                     }
