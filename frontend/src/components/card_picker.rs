@@ -161,39 +161,37 @@ pub fn card_picker(props: &Props) -> Html {
         }
 
         return html! {
-            <>
-                <div id="card-picker" class="scroll-box-container">
-                    <div class="filter-container">
-                        <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
-                        <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
-                        <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
-                        <FilterButtonsMultiSelect<Cost>
-                            label={"Cost"}
-                            select={cost_filter_select}
-                            selected={(*selected_costs).iter().cloned().collect::<Vec<Cost>>()}
-                            deselect={cost_filter_deselect}
-                            clear={cost_filter_clear}
-                        />
-                        <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
-                    </div>
-
-                    <div class="scroll-box">
-                    {
-                        html! {
-                            <CardGrid
-                                cards={filtered_cards.clone()}
-                                excluded_cards={props.excluded_cards.clone()}
-                                display={Display::Detailed}
-                                on_click={props.on_click.clone()}
-                                hover_interaction={true}
-                            />
-                        }
-                    }
-                    </div>
+            <div id="card-picker" class="scroll-box-container">
+                <div class="flex justify-around mb-4 mt-4">
+                    <FilterButtons<Sort> label={"Sort"} select={sort_filter_select} selected={(*selected_sort).clone()} />
+                    <FilterButtons<SortOrder> label={"Sort Order"} select={sort_order_filter_select} selected={(*selected_sort_order).clone()} />
+                    <FilterTextbox filter_type={TextboxType::Search} value={(*input_value).clone()} on_input={on_input} />
+                    <FilterButtonsMultiSelect<Cost>
+                        label={"Cost"}
+                        select={cost_filter_select}
+                        selected={(*selected_costs).iter().cloned().collect::<Vec<Cost>>()}
+                        deselect={cost_filter_deselect}
+                        clear={cost_filter_clear}
+                    />
+                    <FilterButtons<ReleasedOnly> label={"Released Only"} select={released_only_select} selected={(*selected_released_only).clone()} />
                 </div>
-            </>
+
+                <div class="scroll-box">
+                {
+                    html! {
+                        <CardGrid
+                            cards={filtered_cards.clone()}
+                            excluded_cards={props.excluded_cards.clone()}
+                            display={Display::Detailed}
+                            on_click={props.on_click.clone()}
+                            hover_interaction={true}
+                        />
+                    }
+                }
+                </div>
+            </div>
         };
     }
 
-    return html! { <div>{"Loading..."}</div> };
+    return html! { <div>{"Loading..."}</div> }; // TODO make skeleton
 }
