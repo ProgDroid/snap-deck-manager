@@ -9,7 +9,6 @@ use crate::{
 };
 use common::card::Card;
 use yew::prelude::*;
-use yew_router::hooks::use_navigator;
 
 #[derive(Properties, Clone, PartialEq, Eq)]
 pub struct Props {
@@ -18,11 +17,14 @@ pub struct Props {
 
 #[function_component(DeckView)]
 pub fn deck_view(props: &Props) -> Html {
+    let loading = use_state(|| true);
+
     let deck_id = props.deck_id.clone();
     let deck = use_state(|| None);
     {
         let deck = deck.clone();
         let deck_id = deck_id.clone();
+        let loading = loading.clone();
 
         use_effect_with((), move |()| {
             let deck = deck.clone();
@@ -32,12 +34,12 @@ pub fn deck_view(props: &Props) -> Html {
                 } else {
                     // TODO log e
                 }
+
+                loading.set(false);
             });
             || ()
         });
     }
-
-    let navigator = use_navigator().unwrap(); // TODO fix
 
     let route = Route::DeckEdit { deck_id };
 
@@ -59,7 +61,7 @@ pub fn deck_view(props: &Props) -> Html {
                 <h2 class="text-xl font-semibold">{"Cards"}</h2>
                 <CardGrid cards={cards} excluded_cards={Vec::<Card>::default()} display={Display::Simple} on_click={Callback::from(|_| {})}/>
                 <h2 class="text-xl font-semibold">{"Game Modes"}</h2>
-                <div class="flex-row">
+                <div class="flex gap-4">
                 {
                     deck.game_modes.iter().map(|game_mode| {
                         html! {
@@ -78,5 +80,41 @@ pub fn deck_view(props: &Props) -> Html {
         };
     }
 
-    return html! { <div>{"Loading..."}</div> };
+    return if *loading {
+        html! {
+            <>
+                <div class="skeleton w-32 h-7"></div>
+                <h2 class="text-xl font-semibold">{"Share Code"}</h2>
+                <div class="skeleton w-128 h-4"></div>
+                <h2 class="text-xl font-semibold">{"Cards"}</h2>
+                <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+                {
+                    (0..12).map(|_| {
+                        html! {
+                            <div class="skeleton w-40 h-56"></div>
+                        }
+                    }).collect::<Html>()
+                }
+                </div>
+                <h2 class="text-xl font-semibold">{"Game Modes"}</h2>
+                <div class="flex gap-4">
+                {
+                    (0..2).map(|_| {
+                        html! {
+                            <div class="skeleton w-32 h-6"></div>
+                        }
+                    }).collect::<Html>()
+                }
+                </div>
+                <div class="divider"></div>
+                <div>
+                    <div class="btn btn-disabled" disabled={true}>
+                        <button>{"Edit"}</button>
+                    </div>
+                </div>
+            </>
+        }
+    } else {
+        html! {"Could not load deck. Please try again later."} // TODO improve
+    };
 }
