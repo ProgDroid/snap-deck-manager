@@ -6,6 +6,8 @@ RUN cargo install trunk wasm-bindgen-cli
 WORKDIR /usr/src/snap-deck-manager
 COPY . .
 
+COPY frontend/Trunk.toml.dist frontend/Trunk.toml
+
 RUN cd frontend && trunk build --release
 RUN cargo build --release
 
